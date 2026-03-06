@@ -1,6 +1,6 @@
 # Cloud Verification Matrix
 
-Use this matrix to select the minimum acceptable verification set for `cloud-service` mode.
+Use this matrix to select the minimum acceptable verification set for `cloud` mode.
 
 ## How To Use
 
@@ -18,7 +18,7 @@ Use this matrix to select the minimum acceptable verification set for `cloud-ser
 | Rewrite/redirect changes | `validate`, `lint` | `trace_request` for redirect chain in cloud local runtime | deterministic redirect outcome evidence |
 | Header/security hardening | `validate`, `lint` | `inspect_cache(show_metadata=true)` + optional `curl -I` live probe | static header directives + cache metadata + optional live probe output |
 | Incident triage (4xx/5xx spike) | `validate`, `lint` | `monitor_metrics`, `tail_logs`, `trace_request`, `inspect_cache` | incident window + correlated evidence |
-| Cloud readiness | `validate({"config":"<dispatcher.any content>","type":"cloud-service"})`, `lint`, `sdk(action="check-files")`, `sdk(action="diff-baseline")` | runtime checks in cloud SDK context if available | readiness findings + risk table |
+| Cloud readiness | `validate({"config":"<dispatcher.any content>","type":"cloud"})`, `lint`, `sdk(action="check-files")`, `sdk(action="diff-baseline")` | runtime checks in cloud SDK context if available | readiness findings + risk table |
 
 ## Skip Rules
 
@@ -39,7 +39,7 @@ You may skip runtime checks only when runtime prerequisites are unavailable. If 
 # Static checks
 lint({"mode":"directory","target":"/path/to/dispatcher/src","strict_mode":true})
 sdk({"action":"check-files","config_path":"/path/to/dispatcher/src"})
-validate({"config":"<dispatcher.any content>","type":"cloud-service"})
+validate({"config":"<dispatcher.any content>","type":"cloud"})
 
 # Runtime verification
 trace_request({
@@ -61,10 +61,10 @@ tail_logs({"lines":100,"filter_cache_status":"MISS"})
 
 ### Example 3: Cloud Readiness Validation
 
-**Scenario:** Validate config works in cloud-service mode.
+**Scenario:** Validate config works in cloud mode.
 
 ```text
-validate({"config":"<dispatcher.any content>","type":"cloud-service"})
+validate({"config":"<dispatcher.any content>","type":"cloud"})
 lint({"mode":"directory","target":"/path/to/dispatcher/src","strict_mode":true})
 sdk({"action":"check-files","config_path":"/path/to/dispatcher/src"})
 sdk({"action":"diff-baseline","config_path":"/path/to/dispatcher/src"})

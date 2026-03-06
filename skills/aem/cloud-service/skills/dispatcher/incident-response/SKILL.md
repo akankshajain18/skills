@@ -2,7 +2,7 @@
 name: incident-response
 description: Investigate and triage Dispatcher runtime incidents for AEMaaCS cloud workflows only, using container-backed MCP evidence.
 license: Apache-2.0
-compatibility: Requires Dispatcher MCP configured for cloud variant (`AEM_DEPLOYMENT_MODE=cloud-service`).
+compatibility: Requires Dispatcher MCP configured for cloud variant (`AEM_DEPLOYMENT_MODE=cloud`).
 allowed-tools:
   - validate
   - lint

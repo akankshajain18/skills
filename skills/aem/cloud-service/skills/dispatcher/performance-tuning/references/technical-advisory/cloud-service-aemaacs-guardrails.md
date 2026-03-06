@@ -54,7 +54,7 @@ When both are possible, document why one layer is chosen.
 
 Minimum static evidence before sign-off:
 
-1. `validate({"config":"<changed dispatcher content>","type":"cloud-service"})`
+1. `validate({"config":"<changed dispatcher content>","type":"cloud"})`
 2. `lint({"mode":"directory","target":"<dispatcher src path>","strict_mode":true})`
 3. `sdk({"action":"check-files","config_path":"<dispatcher src path>"})`
 4. `sdk({"action":"diff-baseline","config_path":"<dispatcher src path>"})` for drift-sensitive changes

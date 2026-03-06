@@ -2,7 +2,7 @@
 name: security-hardening
 description: Perform Dispatcher and Apache HTTPD security audits for AEMaaCS cloud workflows only, with cloud-specific hardening verification.
 license: Apache-2.0
-compatibility: Requires Dispatcher MCP configured for cloud variant (`AEM_DEPLOYMENT_MODE=cloud-service`).
+compatibility: Requires Dispatcher MCP configured for cloud variant (`AEM_DEPLOYMENT_MODE=cloud`).
 allowed-tools:
   - validate
   - lint

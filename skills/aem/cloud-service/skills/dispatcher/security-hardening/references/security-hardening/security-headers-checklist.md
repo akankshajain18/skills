@@ -120,7 +120,7 @@ MCP checks:
 
 ## Mode Notes
 
-### Cloud (`AEM_DEPLOYMENT_MODE=cloud-service`)
+### Cloud (`AEM_DEPLOYMENT_MODE=cloud`)
 - Runtime log/cache checks can run against local dispatcher container.
 - `DISPATCHER_CONTAINER_NAME` may be set when container discovery fails.
 

@@ -2,7 +2,7 @@
 name: performance-tuning
 description: Optimize Dispatcher performance for AEMaaCS cloud workflows only, with cloud-specific baseline and runtime verification.
 license: Apache-2.0
-compatibility: Requires Dispatcher MCP configured for cloud variant (`AEM_DEPLOYMENT_MODE=cloud-service`).
+compatibility: Requires Dispatcher MCP configured for cloud variant (`AEM_DEPLOYMENT_MODE=cloud`).
 allowed-tools:
   - validate
   - lint

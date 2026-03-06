@@ -2,7 +2,7 @@
 
 ## Inputs To Gather
 
-- deployment mode: `cloud-service`
+- deployment mode: `cloud`
 - sample failing URL(s)
 - sample healthy URL(s)
 - incident time window

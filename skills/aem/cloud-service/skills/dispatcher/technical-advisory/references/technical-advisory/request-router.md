@@ -42,7 +42,7 @@ If intent is mixed:
 
 When handing off from advisory to an execution skill, include:
 
-- selected mode (`cloud-service`)
+- selected mode (`cloud`)
 - objective and acceptance criteria
 - required test IDs from [test-case-catalog.md](test-case-catalog.md)
 - required checks from `mode-specific-verification-matrix.md`

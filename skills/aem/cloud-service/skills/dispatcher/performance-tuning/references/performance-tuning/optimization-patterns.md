@@ -287,7 +287,7 @@ baseline_metrics = monitor_metrics({
 # 3. Validate config
 lint({"mode":"directory","target":"/path/to/dispatcher/src","strict_mode":true})
 sdk({"action":"check-files","config_path":"/path/to/dispatcher/src"})
-validate({"config":"<updated dispatcher.any content>","type":"cloud-service"})
+validate({"config":"<updated dispatcher.any content>","type":"cloud"})
 
 # 4. Reload dispatcher (environment-specific)
 

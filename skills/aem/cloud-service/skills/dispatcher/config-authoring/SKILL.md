@@ -2,7 +2,7 @@
 name: config-authoring
 description: Create, modify, review, and harden Dispatcher and Apache HTTPD config for AEMaaCS local SDK/dev workflows (cloud workflows only). Use for `.any`, vhost, rewrite, cache, and filter changes.
 license: Apache-2.0
-compatibility: Requires Dispatcher MCP configured for cloud variant (`AEM_DEPLOYMENT_MODE=cloud-service`).
+compatibility: Requires Dispatcher MCP configured for cloud variant (`AEM_DEPLOYMENT_MODE=cloud`).
 allowed-tools:
   - validate
   - lint

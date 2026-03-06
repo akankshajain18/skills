@@ -5,7 +5,7 @@ Use these rules for all Cloud dispatcher advisory responses.
 ## Allowed Sources
 
 - Use links listed in `public-docs-index.md`.
-- Use only Experience League references (cloud-service mode docs + common Dispatcher docs).
+- Use only Experience League references (cloud mode docs + common Dispatcher docs).
 - Do not cite internal/private sources in public skill guidance.
 
 ## Citation Requirements

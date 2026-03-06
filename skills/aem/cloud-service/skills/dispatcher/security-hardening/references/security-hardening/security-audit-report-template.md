@@ -5,7 +5,7 @@
 - Audit Date: `[YYYY-MM-DD]`
 - Auditor: `[security-hardening skill]`
 - Scope: `[config path / environment]`
-- Deployment Mode: `cloud-service`
+- Deployment Mode: `cloud`
 - Compliance Lens: `OWASP` / `CIS` / `PCI-DSS` / custom
 - Overall Posture: `PASS` / `PASS WITH RECOMMENDATIONS` / `FAIL`
 

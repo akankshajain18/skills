@@ -5,7 +5,7 @@ Use this template for any dispatcher recommendation that changes behavior.
 ## 1) Change Summary
 
 - Change scope:
-- Target mode: `cloud-service`
+- Target mode: `cloud`
 - Files impacted:
 - User-visible impact expected:
 

@@ -81,5 +81,5 @@ Use this file as the curated public reference set for Cloud Dispatcher guidance.
 ## Usage Policy
 
 1. Use only Experience League links listed in this file.
-2. Keep recommendations scoped to `cloud-service` mode.
+2. Keep recommendations scoped to `cloud` mode.
 3. If docs and MCP runtime evidence conflict, state the conflict and prioritize executed evidence for environment-specific conclusions.

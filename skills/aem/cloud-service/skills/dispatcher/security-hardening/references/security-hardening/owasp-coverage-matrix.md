@@ -97,7 +97,7 @@ trace_request({"url":"/content/site/en.json;.css","method":"GET"})              
 ```text
 lint({"mode":"directory","target":"/path/to/dispatcher/src","strict_mode":true})
 sdk({"action":"check-files","config_path":"/path/to/dispatcher/src"})
-validate({"config":"<dispatcher.any content>","type":"cloud-service"})
+validate({"config":"<dispatcher.any content>","type":"cloud"})
 ```
 
 **Severity if Failed:** Medium

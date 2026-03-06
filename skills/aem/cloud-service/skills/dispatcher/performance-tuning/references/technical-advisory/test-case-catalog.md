@@ -41,7 +41,7 @@ Use these IDs when proposing or reporting verification scenarios.
 
 | Test ID | Goal | Example Input | Expected Result | Primary Tool |
 |---|---|---|---|---|
-| `MODE-001` | Cloud static validity | config package in cloud-service mode | valid in `cloud-service` | `validate` |
+| `MODE-001` | Cloud static validity | config package in cloud mode | valid in `cloud` | `validate` |
 | `MODE-003` | Include graph drift | changed include files | no unsafe drift | `sdk(action="diff-baseline")` |
 
 ## Minimum Selection Rule
@@ -51,4 +51,4 @@ For configuration changes, include at least:
 - one filter test
 - one cache test
 - one rewrite/redirect test if rewrite logic changed
-- one mode test for selected `cloud-service` mode
+- one mode test for selected `cloud` mode
