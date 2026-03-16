@@ -1,0 +1,11 @@
+{
+  "name": "aem-65-lts-workflow",
+  "description": "Single entry point for AEM 6.5 LTS Workflow development — designing workflow models, implementing custom process steps and participant choosers in Java, configuring workflow launchers, deploying via Package Manager or Maven, and triggering workflows via the API, UI, or launcher events. Covers Granite Workflow Engine, WorkflowSession API, WorkflowProcess SPI, ParticipantStepChooser SPI, legacy /etc paths, Felix SCR annotations, workflow packages, and 6.5 LTS deployment patterns.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Adobe"
+  },
+  "repository": "https://github.com/adobe/skills",
+  "license": "Apache-2.0",
+  "keywords": ["aem", "aem65", "6.5", "lts", "workflow", "granite", "process-step", "participant", "launcher", "workflowsession", "osgi", "felix-scr", "package-manager", "adobe"]
+}

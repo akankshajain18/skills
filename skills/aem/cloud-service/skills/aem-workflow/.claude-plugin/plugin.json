@@ -1,0 +1,11 @@
+{
+  "name": "aem-cloud-service-workflow",
+  "description": "Single entry point for AEM as a Cloud Service Workflow development — designing workflow models, implementing custom process steps and participant choosers in Java, configuring workflow launchers, and triggering workflows via the API, UI, or launcher events. Covers Granite Workflow Engine, WorkflowSession API, WorkflowProcess SPI, ParticipantStepChooser SPI, model XML deployment, OSGi registration, and Cloud Service deployment guardrails.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Adobe"
+  },
+  "repository": "https://github.com/adobe/skills",
+  "license": "Apache-2.0",
+  "keywords": ["aem", "aemaacs", "cloud", "workflow", "granite", "process-step", "participant", "launcher", "workflowsession", "osgi", "adobe"]
+}
