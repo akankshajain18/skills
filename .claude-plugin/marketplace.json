@@ -13,9 +13,9 @@
       "description": "Skills for AEM Edge Delivery Services development"
     },
     {
-      "name": "aem-cloud-service-dispatcher",
-      "source": "./skills/aem/cloud-service/skills/dispatcher",
-      "description": "Mode-specific Dispatcher skills for AEM as a Cloud Service workflows"
+      "name": "aem-cloud-service",
+      "source": "./skills/aem/cloud-service",
+      "description": "All AEM as a Cloud Service skills: component development and Dispatcher workflows"
     },
     {
       "name": "aem-6-5-lts-dispatcher",

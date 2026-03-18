@@ -13,11 +13,11 @@ Repository of Adobe skills for AI coding agents.
 # Install AEM Edge Delivery Services plugin (all 17 skills)
 /plugin install aem-edge-delivery-services@adobe-skills
 
-# Install AEM as a Cloud Service Dispatcher plugin
-/plugin install aem-cloud-service-dispatcher@adobe-skills
+# Install all AEM as a Cloud Service skills (create-component + dispatcher) in one command
+/plugin install aem-cloud-service@adobe-skills
 
-# Install AEM 6.5 LTS Dispatcher plugin
-/plugin install aem-6-5-lts-dispatcher@adobe-skills
+# Install all AEM 6.5 LTS skills (dispatcher) in one command
+/plugin install aem-6-5-lts@adobe-skills
 ```
 
 ### Vercel Skills (npx skills)
@@ -26,35 +26,24 @@ Repository of Adobe skills for AI coding agents.
 # Install all AEM Edge Delivery Services skills
 npx skills add https://github.com/adobe/skills/tree/main/skills/aem/edge-delivery-services --all
 
-# Install all AEM as a Cloud Service Dispatcher skills
-npx skills add https://github.com/adobe/skills/tree/main/skills/aem/cloud-service/skills/dispatcher --all
+# Install all AEM as a Cloud Service skills (create-component + dispatcher) in one command
+npx skills add https://github.com/adobe/skills/tree/main/skills/aem/cloud-service --all
 
-# Install all AEM 6.5 LTS Dispatcher skills
-npx skills add https://github.com/adobe/skills/tree/main/skills/aem/6.5-lts/skills/dispatcher --all
+# Install all AEM 6.5 LTS skills (dispatcher) in one command
+npx skills add https://github.com/adobe/skills/tree/main/skills/aem/6.5-lts --all
 
-# Install dispatcher skills for a single agent (pick ONE mode only)
-# AEM as a Cloud Service mode:
-npx skills add https://github.com/adobe/skills/tree/main/skills/aem/cloud-service/skills/dispatcher --all -a cursor -y
-# AEM 6.5 LTS mode:
-npx skills add https://github.com/adobe/skills/tree/main/skills/aem/6.5-lts/skills/dispatcher --all -a cursor -y
+# Install for a single agent (pick ONE flavor only)
+npx skills add https://github.com/adobe/skills/tree/main/skills/aem/cloud-service --all -a cursor -y
+npx skills add https://github.com/adobe/skills/tree/main/skills/aem/6.5-lts --all -a cursor -y
 
 # Install specific skill(s)
 npx skills add adobe/skills -s content-driven-development
 npx skills add adobe/skills -s content-driven-development building-blocks testing-blocks
 
-# Install a specific dispatcher skill from a mode-scoped source
-npx skills add https://github.com/adobe/skills/tree/main/skills/aem/cloud-service/skills/dispatcher -s config-authoring
-npx skills add https://github.com/adobe/skills/tree/main/skills/aem/6.5-lts/skills/dispatcher -s config-authoring
-
-# Install all skills discoverable at repository root (currently AEM Edge Delivery Services)
-npx skills add adobe/skills --all
-# Note: Dispatcher mode skills are grouped under mode-scoped paths and are not discovered from repository root.
-
-# List skills discoverable at repository root (currently AEM Edge Delivery Services)
+# List available skills
 npx skills add adobe/skills --list
-# For dispatcher skills, use mode-scoped --list:
-# npx skills add https://github.com/adobe/skills/tree/main/skills/aem/cloud-service/skills/dispatcher --list
-# npx skills add https://github.com/adobe/skills/tree/main/skills/aem/6.5-lts/skills/dispatcher --list
+npx skills add https://github.com/adobe/skills/tree/main/skills/aem/cloud-service --list
+npx skills add https://github.com/adobe/skills/tree/main/skills/aem/6.5-lts --list
 ```
 
 ### upskill (GitHub CLI Extension)
@@ -62,28 +51,22 @@ npx skills add adobe/skills --list
 ```bash
 gh extension install trieloff/gh-upskill
 
-# Install all skills discoverable at repository root
-gh upskill adobe/skills --all
-# Note: prefer mode-scoped --path installs for dispatcher skills.
-
-# Install only AEM Edge Delivery Services skills
+# Install all AEM Edge Delivery Services skills
 gh upskill adobe/skills --path skills/aem/edge-delivery-services --all
 
-# Install only AEM as a Cloud Service Dispatcher skills
-gh upskill adobe/skills --path skills/aem/cloud-service/skills/dispatcher --all
+# Install all AEM as a Cloud Service skills (create-component + dispatcher)
+gh upskill adobe/skills --path skills/aem/cloud-service --all
 
-# Install only AEM 6.5 LTS Dispatcher skills
-gh upskill adobe/skills --path skills/aem/6.5-lts/skills/dispatcher --all
+# Install all AEM 6.5 LTS skills (dispatcher)
+gh upskill adobe/skills --path skills/aem/6.5-lts --all
 
 # Install a specific skill
 gh upskill adobe/skills --path skills/aem/edge-delivery-services --skill content-driven-development
-gh upskill adobe/skills --path skills/aem/cloud-service/skills/dispatcher --skill config-authoring
-gh upskill adobe/skills --path skills/aem/6.5-lts/skills/dispatcher --skill config-authoring
 
-# List available skills in a subfolder
+# List available skills
 gh upskill adobe/skills --path skills/aem/edge-delivery-services --list
-gh upskill adobe/skills --path skills/aem/cloud-service/skills/dispatcher --list
-gh upskill adobe/skills --path skills/aem/6.5-lts/skills/dispatcher --list
+gh upskill adobe/skills --path skills/aem/cloud-service --list
+gh upskill adobe/skills --path skills/aem/6.5-lts --list
 ```
 
 ## Available Skills
@@ -96,6 +79,18 @@ This package provides three capability areas:
 - Migration and import workflow skills
 
 See `skills/aem/edge-delivery-services/skills/` for the current concrete skill set.
+
+### AEM as a Cloud Service — Create Component
+
+The `create-component` skill creates complete AEM components following Adobe best practices for AEM Cloud Service and AEM 6.5. It covers:
+
+- Component definition, dialog XML, and HTL template
+- Sling Model and optional child item model (multifield)
+- Unit tests for models and servlets
+- Clientlibs (component and dialog)
+- Optional Sling Servlet for dynamic content
+
+See `skills/aem/cloud-service/skills/create-component/` for the skill and its reference files.
 
 ### AEM Dispatcher
 
@@ -122,27 +117,37 @@ skills/
     |       |-- building-blocks/
     |       \-- ...
     |-- cloud-service/
+    |   |-- .claude-plugin/
+    |   |   \-- plugin.json
     |   \-- skills/
+    |       |-- create-component/
+    |       |   |-- SKILL.md          <-- discovered by npx skills
+    |       |   |-- assets/
+    |       |   \-- references/
     |       \-- dispatcher/
-    |           |-- .claude-plugin/
-    |           |   \-- plugin.json
+    |           |-- SKILL.md          <-- discovered by npx skills (router)
     |           |-- config-authoring/
-    |           |   |-- SKILL.md
+    |           |   |-- SKILL.md      <-- specialist (bundled inside dispatcher)
     |           |   \-- references/
-    |           |       \-- ...
     |           |-- technical-advisory/
-    |           \-- ...
+    |           |-- incident-response/
+    |           |-- performance-tuning/
+    |           |-- security-hardening/
+    |           \-- workflow-orchestrator/
     |-- 6.5-lts/
+    |   |-- .claude-plugin/
+    |   |   \-- plugin.json
     |   \-- skills/
     |       \-- dispatcher/
-    |           |-- .claude-plugin/
-    |           |   \-- plugin.json
+    |           |-- SKILL.md          <-- discovered by npx skills (router)
     |           |-- config-authoring/
-    |           |   |-- SKILL.md
+    |           |   |-- SKILL.md      <-- specialist (bundled inside dispatcher)
     |           |   \-- references/
-    |           |       \-- ...
     |           |-- technical-advisory/
-    |           \-- ...
+    |           |-- incident-response/
+    |           |-- performance-tuning/
+    |           |-- security-hardening/
+    |           \-- workflow-orchestrator/
 ```
 
 ## Contributing
