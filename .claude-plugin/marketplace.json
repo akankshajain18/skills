@@ -15,12 +15,12 @@
     {
       "name": "aem-cloud-service",
       "source": "./skills/aem/cloud-service",
-      "description": "All AEM as a Cloud Service skills: component development and Dispatcher workflows"
+      "description": "All AEM as a Cloud Service skills: component development and Dispatcher, workflows"
     },
     {
       "name": "aem-6-5-lts",
       "source": "./skills/aem/6.5-lts",
-      "description": "All AEM 6.5 LTS skills: Dispatcher workflows for AEM 6.5 LTS and AMS environments"
+      "description": "All AEM 6.5 LTS skills: Dispatcher, workflows for AEM 6.5 LTS and AMS environment"
     }
   ]
 }
