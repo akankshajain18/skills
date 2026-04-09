@@ -478,8 +478,22 @@ http_code=$(echo "$response" | tail -n1)
 body=$(echo "$response" | sed '$d')
 
 if [ "$http_code" -eq 200 ]; then
-  echo "Activation successful"
-  echo "$body"
+  # Validate JSON response structure and success status
+  if command -v jq &> /dev/null; then
+    success=$(echo "$body" | jq -r '.success // empty')
+    path=$(echo "$body" | jq -r '.path // empty')
+    
+    if [ "$success" = "true" ]; then
+      echo "Activation successful for path: $path"
+    else
+      error=$(echo "$body" | jq -r '.message // "Unknown error"')
+      echo "Activation reported failure: $error"
+      exit 1
+    fi
+  else
+    echo "Activation successful (HTTP 200)"
+    echo "$body"
+  fi
 else
   echo "Activation failed with HTTP $http_code"
   echo "$body"
@@ -499,8 +513,22 @@ http_code=$(echo "$response" | tail -n1)
 body=$(echo "$response" | sed '$d')
 
 if [ "$http_code" -eq 200 ]; then
-  echo "Deactivation successful"
-  echo "$body"
+  # Validate JSON response structure and success status
+  if command -v jq &> /dev/null; then
+    success=$(echo "$body" | jq -r '.success // empty')
+    path=$(echo "$body" | jq -r '.path // empty')
+    
+    if [ "$success" = "true" ]; then
+      echo "Deactivation successful for path: $path"
+    else
+      error=$(echo "$body" | jq -r '.message // "Unknown error"')
+      echo "Deactivation reported failure: $error"
+      exit 1
+    fi
+  else
+    echo "Deactivation successful (HTTP 200)"
+    echo "$body"
+  fi
 else
   echo "Deactivation failed with HTTP $http_code"
   echo "$body"
@@ -520,8 +548,20 @@ http_code=$(echo "$response" | tail -n1)
 body=$(echo "$response" | sed '$d')
 
 if [ "$http_code" -eq 200 ]; then
-  echo "Tree activation initiated successfully"
-  echo "$body"
+  # Note: Tree activation returns HTML, not JSON
+  # Check for success indicators in HTML response
+  if echo "$body" | grep -q "successfully"; then
+    echo "Tree activation initiated successfully"
+    # Extract and display any useful information from the HTML response
+    if command -v jq &> /dev/null && echo "$body" | jq empty 2>/dev/null; then
+      # If response is JSON (rare but possible)
+      status=$(echo "$body" | jq -r '.status // "initiated"')
+      echo "Status: $status"
+    fi
+  else
+    echo "Tree activation may have encountered issues. Check response:"
+    echo "$body"
+  fi
 else
   echo "Tree activation failed with HTTP $http_code"
   echo "$body"

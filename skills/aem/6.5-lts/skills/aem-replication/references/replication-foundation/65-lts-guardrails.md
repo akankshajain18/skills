@@ -285,6 +285,31 @@ https://publish-host:8443/bin/receive?sling:authRequestLogin=1
 - User has replication permission
 - Resource exists
 
+## Version-Specific Considerations
+
+### API Deprecation Tracking
+
+While AEM 6.5 LTS maintains API compatibility throughout the 6.5.x release line, individual point releases may deprecate specific methods or introduce warnings:
+
+**Check Release Notes for Each 6.5.x Version:**
+- **Release Notes:** [AEM 6.5 Service Pack Release Notes](https://experienceleague.adobe.com/en/docs/experience-manager-65-lts/content/release-notes/release-notes)
+- **Deprecated APIs:** Review JavaDoc `@Deprecated` annotations for alternative methods
+- **Breaking Changes:** While rare in LTS, service packs may deprecate experimental APIs introduced in earlier 6.5.x releases
+
+**Recommended Practice:**
+1. Before upgrading to a new 6.5.x service pack, review release notes for deprecation notices
+2. Check compiler warnings for `@Deprecated` usage after upgrade
+3. Test custom replication code against new service pack in lower environments
+4. Monitor Adobe Experience League for announcements of API changes
+
+**Known Stable APIs (6.5.0 - 6.5.21+):**
+- `Replicator` interface - Core methods stable across all 6.5.x versions
+- `ReplicationOptions` - Configuration class stable
+- `ReplicationStatus` - Status interface stable
+- `AgentManager` - Agent management stable
+
+If your code uses only these documented public APIs from the `com.day.cq.replication` package, it should remain compatible across all AEM 6.5 LTS service packs.
+
 ## Migration Considerations
 
 ### AEM 6.5 LTS End of Life

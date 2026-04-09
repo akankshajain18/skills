@@ -427,14 +427,18 @@ Prepare for migration to AEM as a Cloud Service Sling Distribution API.
 
 #### 4. Reference Migration Patterns
 
-**Delegate to:** Cloud Service best-practices skill
+**Official Adobe Cloud Service Documentation:**
 
-See: `skills/aem/cloud-service/skills/best-practices/references/replication.md`
+- [Content Distribution in AEM as a Cloud Service](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/operations/distribution.html)
+- [Migrating to AEM as a Cloud Service](https://experienceleague.adobe.com/docs/experience-manager-cloud-service/content/migration-journey/getting-started.html)
 
-**Key patterns:**
-- `Replicator.replicate()` → `DistributionAgent.execute()`
-- `ReplicationOptions` → `DistributionRequest`
-- `ReplicationActionType.ACTIVATE` → `DistributionRequestType.ADD`
+**Key API migration patterns:**
+- `Replicator.replicate()` → Sling Distribution API (no direct replacement, use content distribution patterns)
+- `ReplicationOptions` → Configuration via OSGi for distribution agents
+- `ReplicationActionType.ACTIVATE` → Content publish workflows in Cloud Service
+- Agent configuration → Cloud-native distribution managed by Adobe
+
+**Important:** AEM as a Cloud Service uses a fundamentally different architecture. The Replication API does not exist in Cloud Service. Instead, content distribution is handled automatically by the platform. Custom replication code must be refactored to use Cloud Service's content publishing workflows.
 
 ### Success Criteria
 

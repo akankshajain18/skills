@@ -90,6 +90,24 @@ Operations:
 - `retryFirst()` - Retry first blocked item
 - `clear()` - Empty queue (destructive)
 
+**JMX Security Considerations:**
+
+Access to JMX operations requires appropriate permissions:
+
+- **Authentication:** JMX console requires administrator credentials (`http://localhost:4502/system/console/jmx`)
+- **Authorization:** Only users in the `administrators` group can invoke JMX operations by default
+- **Audit Logging:** JMX operations are not logged in `replication.log` - enable JMX audit logging for compliance environments
+- **Production Access:** Restrict JMX console access in production:
+  - Use firewall rules to block external access to JMX ports
+  - Require VPN or SSH tunnel for remote JMX access
+  - Consider read-only JMX access for monitoring users (metrics only, no operations)
+- **Destructive Operations:** `clear()` permanently removes queued replication items - use with caution and only after verifying queue state
+
+**Recommended Production Setup:**
+- Monitoring tools (New Relic, Datadog): Read-only JMX access for metrics
+- Operations team: Full JMX access via secure channel (VPN/SSH)
+- Automated scripts: Use HTTP-based Sling APIs instead of JMX where possible
+
 ## Performance Considerations
 
 ### Queue Depth Thresholds
@@ -167,6 +185,88 @@ If item N blocks:
 3. Review replication.log for timing
 4. Consider asynchronous replication
 
+## Queue Listener Patterns
+
+For event-driven queue monitoring, implement a custom `ReplicationListener` to react to queue state changes:
+
+```java
+import com.day.cq.replication.Agent;
+import com.day.cq.replication.ReplicationAction;
+import com.day.cq.replication.ReplicationListener;
+import com.day.cq.replication.ReplicationResult;
+import org.osgi.service.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Component(
+    service = ReplicationListener.class,
+    immediate = true
+)
+public class QueueMonitorListener implements ReplicationListener {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(QueueMonitorListener.class);
+    private static final int ALERT_THRESHOLD = 20;
+    
+    @Override
+    public void onStart(Agent agent, ReplicationAction action) {
+        // Check queue depth at replication start
+        int queueSize = agent.getQueue().getEntries().size();
+        
+        if (queueSize > ALERT_THRESHOLD) {
+            LOG.warn("Queue depth elevated for agent {}: {} items", 
+                agent.getId(), queueSize);
+            // Send alert to monitoring system
+            alertHighQueueDepth(agent.getId(), queueSize);
+        }
+    }
+    
+    @Override
+    public void onEnd(Agent agent, ReplicationAction action, ReplicationResult result) {
+        if (result.isSuccess()) {
+            LOG.debug("Replication completed for path: {}", action.getPath());
+        } else {
+            LOG.error("Replication failed for path: {}, Queue may be blocked", 
+                action.getPath());
+            checkQueueBlocked(agent);
+        }
+    }
+    
+    @Override
+    public void onError(Agent agent, ReplicationAction action, Exception exception) {
+        LOG.error("Replication error for path: {}", action.getPath(), exception);
+        
+        // Check if queue is blocked
+        if (agent.getQueue().getState() == ReplicationQueue.State.BLOCKED) {
+            LOG.error("Queue BLOCKED for agent: {}", agent.getId());
+            alertQueueBlocked(agent.getId());
+        }
+    }
+    
+    private void checkQueueBlocked(Agent agent) {
+        if (agent.getQueue().getState() == ReplicationQueue.State.BLOCKED) {
+            alertQueueBlocked(agent.getId());
+        }
+    }
+    
+    private void alertHighQueueDepth(String agentId, int queueSize) {
+        // Integration with monitoring system (e.g., Datadog, New Relic, PagerDuty)
+    }
+    
+    private void alertQueueBlocked(String agentId) {
+        // Send critical alert - queue is blocked and requires intervention
+    }
+}
+```
+
+**Event-Driven Monitoring Use Cases:**
+- **Alerting:** Trigger PagerDuty/Slack alerts when queue depth exceeds threshold
+- **Metrics Collection:** Send queue depth metrics to Datadog/New Relic
+- **Auto-Remediation:** Trigger automated retry or clear stale items
+- **Audit Logging:** Record all replication events for compliance
+
+**Listener Registration:**
+Listeners registered as OSGi services are automatically invoked by the replication framework for all replication events across all agents.
+
 ## Best Practices
 
 1. **Monitor Queue Depth:** Alert on sustained depth > 20 items
@@ -175,3 +275,4 @@ If item N blocks:
 4. **Clear Stale Items:** Remove failed items that won't retry successfully
 5. **Size Appropriately:** One agent per publish instance, no sharing
 6. **Log Monitoring:** Watch for repeated retry patterns indicating systemic issues
+7. **Event-Driven Monitoring:** Implement ReplicationListener for real-time queue monitoring and alerting

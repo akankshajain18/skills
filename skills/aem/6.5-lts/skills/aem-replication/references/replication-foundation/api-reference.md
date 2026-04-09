@@ -248,6 +248,162 @@ public void activateWithServiceUser(String path) throws ReplicationException {
 }
 ```
 
+## Error Recovery Patterns
+
+### Retry with Exponential Backoff
+
+Retry transient failures with increasing delays to avoid overwhelming the target system.
+
+```java
+public void activateWithRetry(ResourceResolver resolver, String path, int maxRetries) 
+    throws ReplicationException {
+    
+    Session session = resolver.adaptTo(Session.class);
+    if (session == null) {
+        throw new IllegalStateException("Unable to adapt to Session");
+    }
+    
+    int attempt = 0;
+    long delayMs = 1000; // Start with 1 second
+    
+    while (attempt < maxRetries) {
+        try {
+            replicator.replicate(session, ReplicationActionType.ACTIVATE, path);
+            LOG.info("Replication succeeded on attempt {}", attempt + 1);
+            return; // Success
+            
+        } catch (ReplicationException e) {
+            attempt++;
+            
+            if (attempt >= maxRetries) {
+                LOG.error("Replication failed after {} attempts", maxRetries, e);
+                throw e; // Give up after max retries
+            }
+            
+            // Exponential backoff: 1s, 2s, 4s, 8s, etc.
+            LOG.warn("Replication attempt {} failed, retrying in {}ms", attempt, delayMs, e);
+            
+            try {
+                Thread.sleep(delayMs);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                throw new ReplicationException("Retry interrupted", ie);
+            }
+            
+            delayMs *= 2; // Double the delay for next attempt
+        }
+    }
+}
+```
+
+### Fallback to Asynchronous on Timeout
+
+If synchronous replication times out, fall back to asynchronous mode.
+
+```java
+public void activateWithFallback(ResourceResolver resolver, String path) 
+    throws ReplicationException {
+    
+    Session session = resolver.adaptTo(Session.class);
+    if (session == null) {
+        throw new IllegalStateException("Unable to adapt to Session");
+    }
+    
+    // Try synchronous first
+    ReplicationOptions syncOpts = new ReplicationOptions();
+    syncOpts.setSynchronous(true);
+    
+    try {
+        replicator.replicate(session, ReplicationActionType.ACTIVATE, path, syncOpts);
+        LOG.info("Synchronous replication completed");
+        
+    } catch (ReplicationException e) {
+        // Check if it's a timeout or transient error
+        if (isTransientError(e)) {
+            LOG.warn("Synchronous replication failed, falling back to async", e);
+            
+            // Fallback to asynchronous
+            ReplicationOptions asyncOpts = new ReplicationOptions();
+            asyncOpts.setSynchronous(false);
+            
+            replicator.replicate(session, ReplicationActionType.ACTIVATE, path, asyncOpts);
+            LOG.info("Asynchronous replication queued as fallback");
+        } else {
+            // Permanent error, don't retry
+            throw e;
+        }
+    }
+}
+
+private boolean isTransientError(ReplicationException e) {
+    String message = e.getMessage();
+    return message != null && (
+        message.contains("timeout") ||
+        message.contains("Connection refused") ||
+        message.contains("SocketTimeoutException")
+    );
+}
+```
+
+### Circuit Breaker Pattern
+
+Prevent cascading failures by stopping replication attempts when the target system is down.
+
+```java
+public class ReplicationCircuitBreaker {
+    
+    private static final int FAILURE_THRESHOLD = 5;
+    private static final long TIMEOUT_MS = 60000; // 1 minute
+    
+    private int failureCount = 0;
+    private long lastFailureTime = 0;
+    private boolean circuitOpen = false;
+    
+    @Reference
+    private Replicator replicator;
+    
+    public void activateWithCircuitBreaker(ResourceResolver resolver, String path) 
+        throws ReplicationException {
+        
+        // Check if circuit is open
+        if (circuitOpen) {
+            if (System.currentTimeMillis() - lastFailureTime < TIMEOUT_MS) {
+                throw new ReplicationException("Circuit breaker open - replication disabled temporarily");
+            } else {
+                // Timeout expired, try to close circuit
+                circuitOpen = false;
+                failureCount = 0;
+                LOG.info("Circuit breaker reset, attempting replication");
+            }
+        }
+        
+        Session session = resolver.adaptTo(Session.class);
+        if (session == null) {
+            throw new IllegalStateException("Unable to adapt to Session");
+        }
+        
+        try {
+            replicator.replicate(session, ReplicationActionType.ACTIVATE, path);
+            
+            // Success - reset failure count
+            failureCount = 0;
+            LOG.info("Replication successful");
+            
+        } catch (ReplicationException e) {
+            failureCount++;
+            lastFailureTime = System.currentTimeMillis();
+            
+            if (failureCount >= FAILURE_THRESHOLD) {
+                circuitOpen = true;
+                LOG.error("Circuit breaker opened after {} failures", failureCount);
+            }
+            
+            throw e;
+        }
+    }
+}
+```
+
 ## Official Documentation
 
 - **JavaDoc:** https://developer.adobe.com/experience-manager/reference-materials/6-5-lts/javadoc/com/day/cq/replication/package-summary.html

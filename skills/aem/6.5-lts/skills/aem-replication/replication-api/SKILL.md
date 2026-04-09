@@ -154,6 +154,13 @@ throws ReplicationException
 
 **Example:**
 ```java
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.ReplicationOptions;
+import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Session;
+
 public void activatePageSync(ResourceResolver resolver, String pagePath) 
     throws ReplicationException {
     Session session = resolver.adaptTo(Session.class);
@@ -190,6 +197,13 @@ throws ReplicationException
 
 **Example:**
 ```java
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.ReplicationOptions;
+import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Session;
+
 public void activateMultiplePages(ResourceResolver resolver, String[] pagePaths) 
     throws ReplicationException {
     Session session = resolver.adaptTo(Session.class);
@@ -225,6 +239,12 @@ throws ReplicationException
 
 **Example:**
 ```java
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
+import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Session;
+
 public boolean canUserActivate(ResourceResolver resolver, String pagePath) {
     Session session = resolver.adaptTo(Session.class);
     if (session == null) {
@@ -257,6 +277,9 @@ ReplicationStatus getReplicationStatus(Session session, String path)
 **Example:**
 ```java
 import com.day.cq.replication.ReplicationStatus;
+import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Session;
 import java.util.Calendar;
 
 public ReplicationInfo getPageReplicationInfo(ResourceResolver resolver, String pagePath) {
@@ -297,8 +320,12 @@ throws ReplicationException
 
 **Example:**
 ```java
-import java.util.Iterator;
+import com.day.cq.replication.ReplicationException;
+import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Session;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public List<String> getActivatedPages(ResourceResolver resolver, String rootPath) 
@@ -341,6 +368,18 @@ opts.setSynchronous(true); // Wait for replication to complete
 **Use cases:**
 - Synchronous: When you need confirmation before proceeding (e.g., before redirecting user)
 - Asynchronous: Better performance for bulk operations
+
+**Thread-Blocking Implications:**
+
+When `setSynchronous(true)` is used, the calling thread blocks until replication completes across all target agents. This has important implications:
+
+- **UI Performance:** In servlets or sling models rendering pages, synchronous replication blocks the HTTP request thread. For large content or slow networks, this can cause noticeable page load delays or request timeouts.
+- **Thread Pool Exhaustion:** High-traffic scenarios with synchronous replication can exhaust the servlet container's request thread pool, causing cascading failures.
+- **Recommended Pattern:** Use asynchronous replication (`false`, the default) for user-facing operations. Reserve synchronous mode for background jobs, workflow steps, or cases where immediate confirmation is critical for correctness (e.g., transactional workflows).
+
+**Performance Comparison:**
+- Asynchronous: Request returns immediately after queueing (~10-50ms)
+- Synchronous: Request waits for full replication cycle (500ms-5s typical, longer for large assets or network delays)
 
 #### setFilter(AgentFilter)
 
@@ -438,6 +477,13 @@ String getLastReplicatedRevision();
 
 **Example:**
 ```java
+import com.day.cq.replication.ReplicationStatus;
+import org.apache.sling.api.resource.ResourceResolver;
+
+import javax.jcr.Session;
+import java.util.HashMap;
+import java.util.Map;
+
 public Map<String, Object> getReplicationMetadata(ResourceResolver resolver, String path) {
     Session session = resolver.adaptTo(Session.class);
     if (session == null) {
@@ -674,12 +720,25 @@ public class CustomReplicationProcess implements WorkflowProcess {
 ```java
 import com.day.cq.replication.Agent;
 import com.day.cq.replication.AgentFilter;
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
 import com.day.cq.replication.ReplicationOptions;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.jcr.Session;
+import java.util.List;
 
 public void bulkActivateToSpecificAgent(ResourceResolver resolver, 
                                         List<String> paths, 
                                         String targetAgentId) 
     throws ReplicationException {
+    
+    // Validate parameters
+    if (paths == null || paths.isEmpty()) {
+        throw new IllegalArgumentException("Path list cannot be null or empty");
+    }
     
     Session session = resolver.adaptTo(Session.class);
     if (session == null) {
@@ -909,6 +968,8 @@ import com.day.cq.replication.Agent;
 import com.day.cq.replication.ReplicationAction;
 import com.day.cq.replication.ReplicationResult;
 import com.day.cq.replication.ReplicationLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CustomReplicationListener implements ReplicationListener {
     
@@ -1018,6 +1079,12 @@ boolean isIncluded(Agent agent)
 ```java
 import com.day.cq.replication.AgentFilter;
 import com.day.cq.replication.Agent;
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationOptions;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 // Filter by multiple criteria
 public class CustomAgentFilter implements AgentFilter {
@@ -1487,7 +1554,28 @@ public void safeActivate(ResourceResolver resolver, String path)
 }
 
 /**
- * Check if resource is a replicable type (page or asset).
+ * Validates if a resource is a replicable content type.
+ * 
+ * <p>This method checks if the resource represents content that should be replicated
+ * to publish instances. Only standard AEM content types (pages, assets, experience fragments)
+ * are considered replicable. System and configuration resources are excluded to prevent
+ * unintended replication of application code or configuration.</p>
+ * 
+ * <p><strong>Allowed resource types:</strong></p>
+ * <ul>
+ *   <li><code>cq:Page</code> - Standard AEM pages and their hierarchies</li>
+ *   <li><code>dam:Asset</code> - Digital Asset Manager (DAM) assets including images, videos, documents</li>
+ *   <li><code>cq:PageContent</code> under <code>/content/experience-fragments/</code> - Experience fragments for content reuse</li>
+ * </ul>
+ * 
+ * <p><strong>Excluded paths:</strong> Resources under <code>/apps</code>, <code>/libs</code>,
+ * <code>/etc/designs</code>, <code>/var</code>, and other system paths are implicitly excluded
+ * by only accepting the types above.</p>
+ * 
+ * @param resource the resource to validate (must not be null)
+ * @return {@code true} if the resource is a standard content type that should be replicated;
+ *         {@code false} if it is a system/configuration resource or unsupported type
+ * @see <a href="https://experienceleague.adobe.com/en/docs/experience-manager-65-lts/content/implementing/deploying/configuring/replication">AEM Replication Documentation</a>
  */
 private boolean isReplicableResource(Resource resource) {
     String resourceType = resource.getResourceType();
