@@ -3,7 +3,7 @@
 # Usage: scripts/prepare-release.sh <skill-dir> <version>
 #
 # 1. Updates metadata.version in SKILL.md YAML frontmatter (adds metadata block if missing)
-# 2. Zips the skill directory into dist/<skill-name>.skill
+# 2. Zips the skill directory into <skill-dir>/<skill-name>.skill
 
 set -euo pipefail
 
@@ -50,8 +50,9 @@ BEGIN { in_frontmatter=0; fm_count=0; has_metadata=0; has_version=0; metadata_in
     if (!has_metadata) {
       print "metadata:"
       print "  version: \"" version "\""
+    } else if (has_metadata && !has_version) {
+      print "  version: \"" version "\""
     }
-    # Case b: metadata block exists but no version — already handled inline
     print
     next
   }
