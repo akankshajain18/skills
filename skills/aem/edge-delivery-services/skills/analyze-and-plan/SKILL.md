@@ -73,9 +73,9 @@ Produce structured acceptance criteria in the following format for each requirem
 - [ ] Desktop (≥ 1200px): [specific layout or behavior]
 
 ### Author Experience
-- [ ] Block can be created using [document structure description]
-- [ ] Required fields are [list fields]; optional fields are [list fields]
-- [ ] [Any authoring constraints or notes]
+- [ ] Authors provide [list content inputs/fields needed to create and maintain the block]
+- [ ] Required inputs are [list fields]; optional inputs are [list fields]
+- [ ] Authoring constraints, validation rules, defaults, limits, or field dependencies are [describe constraints or notes]
 
 ### Definition of Done
 - [ ] All functional requirements pass
@@ -104,15 +104,17 @@ Produce structured acceptance criteria in the following format for each requirem
 
 ### Responsive Behavior
 - [ ] Mobile: stacked layout, image fills full width, text below or overlaid
+- [ ] Tablet: similar to desktop but with adjusted spacing/font sizes per design
 - [ ] Desktop: image spans full width, text centered or left-aligned per design
 
 ### Author Experience
-- [ ] Block created with a table: first row = image, second row = headline, third row = subtext, fourth row = CTA link
-- [ ] Only image and headline are required; subtext and CTA are optional
+- [ ] Authors provide a background image, headline, subtext, and CTA link
+- [ ] Required inputs are image and headline; optional inputs are subtext and CTA
+- [ ] No special authoring constraints
 
 ### Definition of Done
 - [ ] All functional requirements pass
-- [ ] No visual regressions on mobile and desktop
+- [ ] No visual regressions on mobile, tablet, and desktop
 - [ ] Edge cases handled gracefully
 ```
 
@@ -130,3 +132,12 @@ Before proceeding to implementation, verify the acceptance criteria cover all of
 - [ ] **Ambiguities resolved** — any open questions answered or flagged for follow-up
 
 Once all boxes can be checked, analysis is complete and implementation may begin.
+
+### Output
+Document the analysis and acceptance criteria in your response. This becomes the reference artifact for subsequent development steps (block building, testing, code review).
+
+
+## Resources
+
+- [Visual Analysis](resources/visual-analysis.md)
+- [Task Types](resources/task-types.md)
