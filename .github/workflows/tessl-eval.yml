@@ -7,10 +7,14 @@ on:
 jobs:
   tessl-eval:
     runs-on: ubuntu-latest
+    # Uses the "eval" environment for protection rules (e.g. reviewer approval)
+    # to guard the TESSL_TOKEN secret against exfiltration via same-repo branches.
+    environment: eval
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Check eval trigger
         id: trigger
@@ -109,12 +113,11 @@ jobs:
             else
               PASS=$((PASS + 1))
               SUMMARY_ROWS="$SUMMARY_ROWS| $TILE_NAME | passed | ✅ |\n"
+              # Show detailed results only for successful eval
+              echo "::group::Eval results for $TILE_NAME"
+              tessl eval view --last 2>&1 || true
+              echo "::endgroup::"
             fi
-
-            # Show detailed results
-            echo "::group::Eval results for $TILE_NAME"
-            tessl eval view --last 2>&1 || true
-            echo "::endgroup::"
           done
 
           TOTAL=$((PASS + FAIL))

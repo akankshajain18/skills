@@ -37,7 +37,7 @@ PRs go through three tiers of quality checks:
 
 1. **Validation** (`npm run validate`) — checks skill structure against the [agentskills.io](https://agentskills.io) spec. Runs automatically on every PR.
 
-2. **Tessl Skill Review** (`tessl skill review`) — LLM-based scoring of content quality, activation quality, and security. Runs automatically on every PR for changed skills. Must score above 50%.
+2. **Tessl Skill Review** (`tessl skill review`) — LLM-based scoring of content quality, activation quality, and security. Runs automatically on every PR for changed skills. Must score at least 50%.
 
 3. **Tessl Evals** (`tessl eval run`) — end-to-end agent evaluation that measures whether the skill actually improves agent behavior. Runs only when explicitly requested and only for skills that include a `tile.json`.
 
@@ -53,7 +53,9 @@ git push
 Things to know:
 
 - Evals only run for skills that have a `tile.json` in their tile directory
-- Evals require the `TESSL_TOKEN` secret (maintainers only, or auto-available in CI)
+- Evals require the `TESSL_TOKEN` GitHub Actions secret
+- GitHub Actions secrets are not available to PRs from forks, so external contributors cannot run evals directly
+- If you need evals for a fork-based PR, ask a maintainer to run them from a branch in the main repo
 - Evals take several minutes per skill — be patient
 - Results appear in the GitHub Actions step summary
 - Evals measure the "impact score" — the gap between agent performance with vs. without the skill
