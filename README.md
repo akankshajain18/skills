@@ -18,6 +18,12 @@ Repository of Adobe skills for AI coding agents.
 
 # Install App Builder plugin (6 skills)
 /plugin install app-builder@adobe-skills
+
+# Install all AEM as a Cloud Service skills (create-component + workflow + dispatcher) in one command
+/plugin install aem-cloud-service@adobe-skills
+
+# Install all AEM 6.5 LTS skills (workflow + dispatcher) in one command
+/plugin install aem-6-5-lts@adobe-skills
 ```
 
 ### Vercel Skills (npx skills)
@@ -29,15 +35,24 @@ npx skills add https://github.com/adobe/skills/tree/main/skills/aem/edge-deliver
 # Install all App Builder skills
 npx skills add https://github.com/adobe/skills/tree/main/skills/app-builder --all
 
+# Install all AEM as a Cloud Service skills (create-component + workflow + dispatcher) in one command
+npx skills add https://github.com/adobe/skills/tree/beta/skills/aem/cloud-service --all
+
+# Install all AEM 6.5 LTS skills (workflow + dispatcher) in one command
+npx skills add https://github.com/adobe/skills/tree/beta/skills/aem/6.5-lts --all
+
+# Install for a single agent (pick ONE flavor only)
+npx skills add https://github.com/adobe/skills/tree/beta/skills/aem/cloud-service -a cursor -y
+npx skills add https://github.com/adobe/skills/tree/beta/skills/aem/6.5-lts -a cursor -y
+
 # Install specific skill(s)
 npx skills add adobe/skills -s content-driven-development
 npx skills add adobe/skills -s content-driven-development building-blocks testing-blocks
 
-# Install all Adobe skills (all products)
-npx skills add adobe/skills --all
-
 # List available skills
 npx skills add adobe/skills --list
+npx skills add https://github.com/adobe/skills/tree/beta/skills/aem/cloud-service --list
+npx skills add https://github.com/adobe/skills/tree/beta/skills/aem/6.5-lts --list
 ```
 
 ### upskill (GitHub CLI Extension)
@@ -45,54 +60,101 @@ npx skills add adobe/skills --list
 ```bash
 gh extension install trieloff/gh-upskill
 
-# Install all skills from this repo
-gh upskill adobe/skills --all
-
-# Install only AEM Edge Delivery Services skills
+# Install all AEM Edge Delivery Services skills
 gh upskill adobe/skills --path skills/aem/edge-delivery-services --all
+
+# Install all AEM as a Cloud Service skills (create-component + workflow + dispatcher)
+gh upskill adobe/skills --path skills/aem/cloud-service --all
+
+# Install all AEM 6.5 LTS skills (workflow + dispatcher)
+gh upskill adobe/skills --path skills/aem/6.5-lts --all
 
 # Install a specific skill
 gh upskill adobe/skills --path skills/aem/edge-delivery-services --skill content-driven-development
 
-# List available skills in a subfolder
+# List available skills
 gh upskill adobe/skills --path skills/aem/edge-delivery-services --list
+gh upskill adobe/skills --path skills/aem/cloud-service --list
+gh upskill adobe/skills --path skills/aem/6.5-lts --list
 ```
 
 ## Available Skills
 
 ### AEM Edge Delivery Services
 
-#### Core Development
+This package provides three capability areas:
+- Core development workflow skills
+- Discovery and documentation lookup skills
+- Migration and import workflow skills
 
-| Skill | Description |
-|-------|-------------|
-| `content-driven-development` | Orchestrates the CDD workflow for all code changes |
-| `analyze-and-plan` | Analyze requirements and define acceptance criteria |
-| `building-blocks` | Implement blocks and core functionality |
-| `testing-blocks` | Browser testing and validation |
-| `content-modeling` | Design author-friendly content models |
-| `code-review` | Self-review and PR review |
+See `skills/aem/edge-delivery-services/skills/` for the current concrete skill set.
 
-#### Discovery
+### AEM as a Cloud Service — Create Component
 
-| Skill | Description |
-|-------|-------------|
-| `block-inventory` | Survey available blocks in project and Block Collection |
-| `block-collection-and-party` | Search reference implementations |
-| `docs-search` | Search aem.live documentation |
-| `find-test-content` | Find existing content for testing |
+The `create-component` skill creates complete AEM components following Adobe best practices for AEM Cloud Service and AEM 6.5. It covers:
 
-#### Migration
+- Component definition, dialog XML, and HTL template
+- Sling Model and optional child item model (multifield)
+- Unit tests for models and servlets
+- Clientlibs (component and dialog)
+- Optional Sling Servlet for dynamic content
 
-| Skill | Description |
-|-------|-------------|
-| `page-import` | Import webpages (orchestrator) |
-| `scrape-webpage` | Scrape and analyze webpage content |
-| `identify-page-structure` | Analyze page sections |
-| `page-decomposition` | Analyze content sequences |
-| `authoring-analysis` | Determine authoring approach |
-| `generate-import-html` | Generate structured HTML |
-| `preview-import` | Preview imported content |
+See `skills/aem/cloud-service/skills/create-component/` for the skill and its reference files.
+
+### AEM as a Cloud Service — Ensure AGENTS.md (bootstrap)
+
+The `ensure-agents-md` skill is a **bootstrap skill** that runs first, before any other work. When a
+customer opens their AEM Cloud Service project and asks the agent anything, this skill checks whether
+`AGENTS.md` exists at the repo root. If missing, it:
+
+- Reads root `pom.xml` to resolve the project name and discover actual modules
+- Detects add-ons (CIF, Forms, SPA type, precompiled scripts)
+- Generates a tailored `AGENTS.md` with only the modules that exist, correct frontend variant, conditional
+  Dispatcher MCP section, and the right resource links
+- Creates `CLAUDE.md` (`@AGENTS.md`) so Claude-based tools also discover the guidance
+
+If `AGENTS.md` already exists it is never overwritten.
+
+See `skills/aem/cloud-service/skills/ensure-agents-md/` for the skill, template, and module catalog.
+
+### AEM Workflow
+
+Workflow skills cover the full AEM Granite Workflow Engine lifecycle — from designing and implementing workflows to production debugging and incident triaging. Like Dispatcher, they are split by runtime flavor:
+
+- `skills/aem/cloud-service/skills/aem-workflow` — Cloud Service variant (no JMX, Cloud Manager logs, pipeline deploy)
+- `skills/aem/6.5-lts/skills/aem-workflow` — 6.5 LTS / AMS variant (JMX, Felix Console, direct log access)
+
+Each flavor contains the same specialist sub-skills:
+
+| Sub-Skill | Purpose |
+|---|---|
+| `workflow-model-design` | Design workflow models, step types, OR/AND splits, variables |
+| `workflow-development` | Implement WorkflowProcess steps, ParticipantStepChooser, OSGi services |
+| `workflow-triggering` | Start workflows from UI, code, HTTP API, or Manage Publication |
+| `workflow-launchers` | Configure automatic workflow launchers on JCR events |
+| `workflow-debugging` | Debug stuck, failed, or stale workflows in production |
+| `workflow-triaging` | Classify incidents, determine log patterns, Splunk queries |
+| `workflow-orchestrator` | Full lifecycle orchestration across all sub-skills |
+
+### AEM Dispatcher
+
+Dispatcher skills are split by runtime flavor to avoid mode auto-detection and keep installation explicit.
+Install only one dispatcher flavor in a workspace (`cloud-service` or `6.5-lts`).
+
+Current dispatcher flavors:
+- `skills/aem/cloud-service/skills/dispatcher`
+- `skills/aem/6.5-lts/skills/dispatcher`
+
+Each flavor contains parallel capability groups (workflow orchestration, config authoring, technical advisory, incident response, performance tuning, and security hardening).
+Shared advisory logic is centralized under each flavor's `dispatcher/shared/references/` to reduce duplication and drift.
+
+### AEM as a Cloud Service — Best Practices & Migration
+
+Under `skills/aem/cloud-service/skills/`, **`best-practices/`** is the **general-purpose** Cloud Service skill: pattern modules, Java baseline references (SCR→OSGi DS, resolver/logging, and related refs), and day-to-day Cloud Service alignment. Use it **without** loading **migration** for greenfield or maintainability work. **`migration/`** (BPA/CAM orchestration) is **scoped to legacy AEM → AEM as a Cloud Service** (not Edge Delivery or 6.5 LTS); it **delegates** concrete refactors to **`best-practices`** (`references/`). **Installing the AEM as a Cloud Service plugin** (`aem-cloud-service`, or the `skills/aem/cloud-service` path with `npx skills` / `gh upskill`) **includes both**; the agent should load the appropriate `SKILL.md` for the task. Use **`gh upskill` / `npx skills` with `--skill`** when you need a specific bundled skill (see **Installation** above).
+
+**Key features:**
+- **Best practices:** one skill for patterns, SCR→OSGi DS, and resolver/logging — applicable to Cloud Service projects generally, not only migration
+- **Migration:** orchestration-only; pattern and transformation content lives in **`best-practices`**
 
 ### AEM Project Management
 
@@ -154,21 +216,82 @@ skills/
 │   │       ├── content-driven-development/
 │   │       ├── building-blocks/
 │   │       └── ...
-│   └── project-management/
+│   ├── project-management/
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   ├── fonts/
+│   │   ├── hooks/
+│   │   │   └── pdf-lifecycle.js
+│   │   ├── templates/
+│   │   │   └── whitepaper.typ
+│   │   └── skills/
+│   │       ├── handover/
+│   │       ├── authoring/
+│   │       ├── development/
+│   │       ├── admin/
+│   │       ├── whitepaper/
+│   │       └── auth/
+│   ├── cloud-service/
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json
+│   │   └── skills/
+│   │       ├── best-practices/
+│   │       │   ├── README.md
+│   │       │   ├── SKILL.md
+│   │       │   └── references/
+│   │       ├── migration/
+│   │       │   ├── README.md
+│   │       │   ├── SKILL.md
+│   │       │   ├── references/
+│   │       │   └── scripts/
+│   │       ├── ensure-agents-md/
+│   │       │   ├── SKILL.md
+│   │       │   └── references/
+│   │       │       ├── AGENTS.md.template
+│   │       │       └── module-catalog.md
+│   │       ├── create-component/
+│   │       │   ├── SKILL.md
+│   │       │   ├── assets/
+│   │       │   └── references/
+│   │       ├── aem-workflow/
+│   │       │   ├── SKILL.md
+│   │       │   ├── workflow-model-design/
+│   │       │   ├── workflow-development/
+│   │       │   ├── workflow-triggering/
+│   │       │   ├── workflow-launchers/
+│   │       │   ├── workflow-debugging/
+│   │       │   ├── workflow-triaging/
+│   │       │   └── workflow-orchestrator/
+│   │       └── dispatcher/
+│   │           ├── SKILL.md
+│   │           ├── config-authoring/
+│   │           ├── technical-advisory/
+│   │           ├── incident-response/
+│   │           ├── performance-tuning/
+│   │           ├── security-hardening/
+│   │           └── workflow-orchestrator/
+│   └── 6.5-lts/
 │       ├── .claude-plugin/
 │       │   └── plugin.json
-│       ├── fonts/
-│       ├── hooks/
-│       │   └── pdf-lifecycle.js
-│       ├── templates/
-│       │   └── whitepaper.typ
 │       └── skills/
-│           ├── handover/
-│           ├── authoring/
-│           ├── development/
-│           ├── admin/
-│           ├── whitepaper/
-│           └── auth/
+│           ├── aem-workflow/
+│           │   ├── SKILL.md
+│           │   ├── workflow-model-design/
+│           │   ├── workflow-development/
+│           │   ├── workflow-triggering/
+│           │   ├── workflow-launchers/
+│           │   ├── workflow-debugging/
+│           │   ├── workflow-triaging/
+│           │   └── workflow-orchestrator/
+│           ├── ensure-agents-md/
+│           └── dispatcher/
+│               ├── SKILL.md
+│               ├── config-authoring/
+│               ├── technical-advisory/
+│               ├── incident-response/
+│               ├── performance-tuning/
+│               ├── security-hardening/
+│               └── workflow-orchestrator/
 └── app-builder/
     ├── .claude-plugin/
     │   └── plugin.json
