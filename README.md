@@ -7,10 +7,7 @@ Repository of Adobe skills for AI coding agents.
 ### Claude Code Plugins
 
 ```bash
-# Add the Adobe Skills marketplace
 /plugin marketplace add adobe/skills
-
-# Install AEM Edge Delivery Services plugin (all 17 skills)
 /plugin install aem-edge-delivery-services@adobe-skills
 
 # Install all AEM as a Cloud Service skills (create-component + workflow + dispatcher) in one command
@@ -18,6 +15,7 @@ Repository of Adobe skills for AI coding agents.
 
 # Install all AEM 6.5 LTS skills (workflow + dispatcher + replication) in one command
 /plugin install aem-6-5-lts@adobe-skills
+/plugin install aem-project-management@adobe-skills
 ```
 
 ### Vercel Skills (npx skills)
@@ -49,7 +47,7 @@ npx skills add https://github.com/adobe/skills/tree/beta/skills/aem/6.5-lts --li
 ### upskill (GitHub CLI Extension)
 
 ```bash
-gh extension install trieloff/gh-upskill
+gh extension install ai-ecoverse/gh-upskill
 
 # Install all AEM Edge Delivery Services skills
 gh upskill adobe/skills --path skills/aem/edge-delivery-services --all
@@ -71,12 +69,11 @@ gh upskill adobe/skills --path skills/aem/6.5-lts --list
 
 ## Available Skills
 
-### AEM Edge Delivery Services
+### For Business
 
-This package provides three capability areas:
-- Core development workflow skills
-- Discovery and documentation lookup skills
-- Migration and import workflow skills
+#### Adobe Experience Manager
+
+##### Developing with Edge Delivery Services
 
 See `skills/aem/edge-delivery-services/skills/` for the current concrete skill set.
 
@@ -168,6 +165,23 @@ Under `skills/aem/cloud-service/skills/`, **`best-practices/`** is the **general
 **Key features:**
 - **Best practices:** one skill for patterns, SCR→OSGi DS, and resolver/logging — applicable to Cloud Service projects generally, not only migration
 - **Migration:** orchestration-only; pattern and transformation content lives in **`best-practices`**
+
+##### Managing Projects
+
+Handover documentation and PDF generation for AEM Edge Delivery Services projects.
+
+| Skill | Description |
+|-------|-------------|
+| `handover` | Orchestrates project documentation generation |
+| `authoring` | Generate comprehensive authoring guide for content authors |
+| `development` | Generate technical documentation for developers |
+| `admin` | Generate admin guide for site administrators |
+| `whitepaper` | Create professional PDF whitepapers from Markdown |
+| `auth` | Authenticate with AEM Config Service API |
+
+### Creativity & Design
+
+_Coming soon._
 
 ## Repository Structure
 
@@ -281,15 +295,16 @@ skills/
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on adding or updating skills.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on adding or updating skills. Join [#agentskills](https://adobe.enterprise.slack.com/archives/C0APTKDNPEY) on Adobe Slack for questions and discussion.
 
 ## Resources
 
 - [agentskills.io Specification](https://agentskills.io)
 - [Claude Code Plugins](https://code.claude.com/docs/en/discover-plugins)
 - [Vercel Skills](https://github.com/vercel-labs/skills)
-- [upskill GitHub Extension](https://github.com/trieloff/gh-upskill)
+- [upskill GitHub Extension](https://github.com/ai-ecoverse/gh-upskill)
+- [#agentskills Slack Channel](https://adobe.enterprise.slack.com/archives/C0APTKDNPEY)
 
 ## License
 
-Apache 2.0 - see [LICENSE](LICENSE) for details.
+Apache 2.0 — see [LICENSE](LICENSE) for details.
