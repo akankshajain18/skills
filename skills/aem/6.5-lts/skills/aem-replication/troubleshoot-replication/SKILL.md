@@ -1,6 +1,7 @@
 ---
 name: troubleshoot-replication
 description: Diagnose and fix common AEM 6.5 LTS replication issues including blocked queues, connectivity failures, and content distribution problems
+license: Apache-2.0
 ---
 
 # Troubleshoot AEM 6.5 LTS Replication

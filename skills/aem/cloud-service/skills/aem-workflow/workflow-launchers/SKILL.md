@@ -1,3 +1,9 @@
+---
+name: workflow-launchers
+description: Configure and deploy Workflow Launchers that automatically start workflows in response to JCR content changes on AEM as a Cloud Service
+license: Apache-2.0
+---
+
 # Workflow Launchers Skill — AEM as a Cloud Service
 
 ## Purpose

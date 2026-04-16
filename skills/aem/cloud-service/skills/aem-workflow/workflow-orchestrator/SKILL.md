@@ -1,3 +1,9 @@
+---
+name: workflow-orchestrator
+description: Master entry point for all AEM Workflow tasks on Cloud Service spanning development and production support
+license: Apache-2.0
+---
+
 # Workflow Orchestrator — AEM as a Cloud Service
 
 ## Purpose

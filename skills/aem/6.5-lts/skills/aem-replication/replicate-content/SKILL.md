@@ -1,6 +1,7 @@
 ---
 name: replicate-content
 description: Activate and deactivate content in AEM 6.5 LTS using replication agents for publishing to target instances
+license: Apache-2.0
 ---
 
 # Replicate Content in AEM 6.5 LTS

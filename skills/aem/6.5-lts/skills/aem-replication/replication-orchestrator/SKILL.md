@@ -3,6 +3,7 @@ name: replication-orchestrator
 description: |
   Orchestrates end-to-end replication workflows spanning multiple concerns: new environment setup,
   production incident response, and performance optimization for AEM 6.5 LTS.
+license: Apache-2.0
 ---
 
 # Replication Orchestrator

@@ -1,6 +1,7 @@
 ---
 name: migration
 description: Orchestrates legacy AEM (6.x, AMS, on-prem) to AEM as a Cloud Service migration using BPA CSV or cache, CAM/MCP target discovery, and one-pattern-per-session workflow. Use for BPA/CAM findings, Cloud Service blockers, or fixes for scheduler, ResourceChangeListener, replication, EventListener, OSGi EventHandler, DAM AssetManager, HTL data-sly-test lint. Transformation steps live in the best-practices skill—read it and the right references/ modules before editing code.
+license: Apache-2.0
 ---
 
 # AEM as a Cloud Service — Code Migration

@@ -1,3 +1,9 @@
+---
+name: workflow-orchestrator
+description: Master entry point for all AEM Workflow tasks on AEM 6.5 LTS spanning development and production support
+license: Apache-2.0
+---
+
 # Workflow Orchestrator — AEM 6.5 LTS
 
 ## Purpose

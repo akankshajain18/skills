@@ -1,6 +1,7 @@
 ---
 name: configure-replication-agent
 description: Configure AEM 6.5 LTS replication agents for content publishing, dispatcher cache flushing, and reverse replication
+license: Apache-2.0
 ---
 
 # Configure AEM Replication Agent
