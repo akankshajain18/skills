@@ -18,6 +18,7 @@
 | user_cannot_see_or_complete_item | [runbook-inbox-and-permissions.md](runbook-inbox-and-permissions.md) | Assignee/initiator/superuser; enforce flags on WorkflowSessionFactory (see SKILL.md Step 5). |
 | cannot_delete_model | [runbook-model-delete-and-update.md](runbook-model-delete-and-update.md) | countRunningWorkflows → terminate/complete → delete model. |
 | slow_throughput_queue_backlog | [runbook-job-throughput-and-concurrency.md](runbook-job-throughput-and-concurrency.md) | returnSystemJobInfo; `queue.maxparallel` on the Granite Workflow Queue. |
+| workflow_auto_advance_failure | [runbook-job-throughput-and-concurrency.md](runbook-job-throughput-and-concurrency.md) | Sling `default` thread pool saturation; `com/adobe/granite/workflow/timeout/job` scheduled; `blockPolicy`. |
 | workflow_setup_validation | [runbook-validate-workflow-setup.md](runbook-validate-workflow-setup.md) | Run Checklist (model sync, launcher, process, permissions). |
 
 MBean details: [mbeans.md](../docs/mbeans.md).

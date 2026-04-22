@@ -152,6 +152,21 @@ runbook_ref: runbooks/runbook-job-throughput-and-concurrency.md
 
 ---
 
+### symptom_id: workflow_auto_advance_failure
+
+```yaml
+symptom_id: workflow_auto_advance_failure
+symptom_description: "Workflow auto-advancement stops; timeout jobs not firing; workflows stuck at participant step despite a timeout being configured on the step."
+root_cause_categories:
+  - default_threadpool_saturated
+  - block_policy_abort_rejects_timeout_jobs
+  - scheduler_blocked_on_long_running_task
+  - timeout_job_deregistered
+runbook_ref: runbooks/runbook-job-throughput-and-concurrency.md
+```
+
+---
+
 ### symptom_id: workflow_setup_validation
 
 ```yaml
@@ -181,6 +196,7 @@ runbook_ref: runbooks/runbook-validate-workflow-setup.md
 | user_cannot_see_or_complete_item | runbook-inbox-and-permissions.md | runbooks/ |
 | cannot_delete_model | runbook-model-delete-and-update.md | runbooks/ |
 | slow_throughput_queue_backlog | runbook-job-throughput-and-concurrency.md | runbooks/ |
+| workflow_auto_advance_failure | runbook-job-throughput-and-concurrency.md | runbooks/ |
 | workflow_setup_validation | runbook-validate-workflow-setup.md | runbooks/ |
 
 ---
