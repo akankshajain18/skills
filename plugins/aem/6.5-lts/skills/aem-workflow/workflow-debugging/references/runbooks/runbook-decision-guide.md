@@ -15,7 +15,7 @@
 | step_failed_retries_exhausted | [runbook-failed-work-items.md](runbook-failed-work-items.md) | Logs → process.label → JMX retryFailedWorkItems or Inbox retry. |
 | stale_workflow_no_work_item | [runbook-stale-workflows.md](runbook-stale-workflows.md) | countStaleWorkflows → restartStaleWorkflows(dryRun then execute). |
 | repository_bloat_too_many_instances | [runbook-purge-and-cleanup.md](runbook-purge-and-cleanup.md) | purgeCompleted(dryRun then execute) or Purge Scheduler. |
-| user_cannot_see_or_complete_item | [runbook-inbox-and-permissions.md](runbook-inbox-and-permissions.md) | Assignee/initiator/superuser; enforce flags → [configurations.md](../docs/configurations.md). |
+| user_cannot_see_or_complete_item | [runbook-inbox-and-permissions.md](runbook-inbox-and-permissions.md) | Assignee/initiator/superuser; enforce flags on WorkflowSessionFactory (see SKILL.md Step 5). |
 | cannot_delete_model | [runbook-model-delete-and-update.md](runbook-model-delete-and-update.md) | countRunningWorkflows → terminate/complete → delete model. |
 | slow_throughput_queue_backlog | [runbook-job-throughput-and-concurrency.md](runbook-job-throughput-and-concurrency.md) | returnSystemJobInfo; `queue.maxparallel` on the Granite Workflow Queue. |
 | workflow_setup_validation | [runbook-validate-workflow-setup.md](runbook-validate-workflow-setup.md) | Run Checklist (model sync, launcher, process, permissions). |

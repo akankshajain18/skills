@@ -49,4 +49,6 @@ User does not see work items; “Terminate failed”, “Resume failed”, “Su
 
 ## References
 
-[configurations.md](../docs/configurations.md) | [error-patterns.md](../docs/error-patterns.md)
+[error-patterns.md](../docs/error-patterns.md) | [runbook-task-not-in-inbox.md](runbook-task-not-in-inbox.md)
+
+WorkflowSessionFactory properties (`enforceWorkitemAssigneePermissions`, `enforceWorkflowInitiatorPermissions`, `cq.workflow.superuser`): SKILL.md Step 5.

@@ -10,7 +10,7 @@
 2. **Logs** – `jobhandler: refreshing the session since we had to wait for a lock` indicates instance lock contention on `/var/workflow`.
 3. **Sling job queue** – JMX → **returnSystemJobInfo** / **returnWorkflowQueueInfo** to see queue depth and topic.
 
-**Reference:** [Configurations](../docs/configurations.md), [MBeans](../docs/mbeans.md).
+**Reference:** [MBeans](../docs/mbeans.md). OSGi property / config reference: SKILL.md Step 5.
 
 ---
 
@@ -30,4 +30,4 @@ If LockProcess/UnlockProcess are not working or not desired:
 
 - Workflow Config → `cq.workflow.config.allow.locking` (default false on Oak). Set to true only if you need lock/unlock (backwards compatibility; Oak may not support strict locking). Otherwise leave disabled; lock/unlock steps are no-ops.
 
-**Reference:** [Configurations – Workflow Config](../docs/configurations.md).
+**Reference:** Workflow Config properties (including `cq.workflow.config.allow.locking`) in SKILL.md Step 5.
