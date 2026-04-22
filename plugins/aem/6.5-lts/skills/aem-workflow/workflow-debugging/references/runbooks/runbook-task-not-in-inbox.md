@@ -52,4 +52,6 @@ User expects a work item to appear in Inbox but it does not appear.
 
 ## References
 
-[authoring-and-inbox.md](../docs/authoring-and-inbox.md) | [runbook-inbox-and-permissions.md](runbook-inbox-and-permissions.md) | [configurations.md](../docs/configurations.md)
+[runbook-inbox-and-permissions.md](runbook-inbox-and-permissions.md) | [runbook-workflow-stuck.md](runbook-workflow-stuck.md)
+
+WorkflowSessionFactory enforce flags and superuser list: SKILL.md Step 5.

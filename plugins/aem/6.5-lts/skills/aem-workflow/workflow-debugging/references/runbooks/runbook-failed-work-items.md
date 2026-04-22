@@ -47,4 +47,6 @@ Workflow step failed after all retries; a failure work item was created and may 
 
 ## References
 
-[error-patterns.md](../docs/error-patterns.md) | [configurations.md](../docs/configurations.md) | [mbeans.md](../docs/mbeans.md) | [custom-process-development.md](../docs/custom-process-development.md)
+[error-patterns.md](../docs/error-patterns.md) | [mbeans.md](../docs/mbeans.md) | [runbook-workflow-fails-or-shows-error.md](runbook-workflow-fails-or-shows-error.md)
+
+OSGi property reference (WorkflowSessionFactory, retry, permissions): SKILL.md Step 5.

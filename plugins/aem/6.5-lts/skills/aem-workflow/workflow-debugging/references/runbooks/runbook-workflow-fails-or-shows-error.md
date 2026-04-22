@@ -50,4 +50,6 @@ Workflow instance is in Failed state, or a step displays an error in history or 
 
 ## References
 
-[error-patterns.md](../docs/error-patterns.md) | [runbook-failed-work-items.md](runbook-failed-work-items.md) | [mbeans.md](../docs/mbeans.md) | [configurations.md](../docs/configurations.md)
+[error-patterns.md](../docs/error-patterns.md) | [runbook-failed-work-items.md](runbook-failed-work-items.md) | [mbeans.md](../docs/mbeans.md)
+
+Retry / timeout / superuser properties on WorkflowSessionFactory: SKILL.md Step 5.

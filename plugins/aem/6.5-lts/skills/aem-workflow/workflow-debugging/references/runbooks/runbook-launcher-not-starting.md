@@ -55,4 +55,6 @@ Workflow should start automatically on a node event (e.g. page/asset create or u
 
 ## References
 
-[jcr-paths.md](../docs/jcr-paths.md) | [error-patterns.md](../docs/error-patterns.md) | [workflow-editor-and-steps.md](../docs/workflow-editor-and-steps.md)
+[error-patterns.md](../docs/error-patterns.md) | [runbook-validate-workflow-setup.md](runbook-validate-workflow-setup.md)
+
+Launcher config path (`/conf/global/settings/workflow/launcher/config`) and model paths (`/conf/global/settings/workflow/models/`, `/var/workflow/models/`): see Checklist items 2 and 6 above.

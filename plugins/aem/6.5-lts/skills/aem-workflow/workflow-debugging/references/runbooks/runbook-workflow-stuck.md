@@ -39,7 +39,7 @@ Workflow instance remains in state Running and does not advance to the next step
 6. **Current step = Process: Logs** – In `error.log`, search for instance ID, workflow model name, or payload path. Look for exception stack trace; note exception type and message.
 7. **Current step = Process: Payload** – Resolve payload path from instance (e.g. JCR_PATH). In CRX/JCR or Repository browser, confirm path exists and is readable by the workflow service user.
 8. **Current step = Process: Timeout** – If logs indicate timeout or step runs long, check for long-running logic, external calls, or locks. Consider timeout configuration for the step if applicable.
-9. **Current step = Process: Registration** – Confirm the Process step references a process name that matches an OSGi-registered `WorkflowProcess` with that `process.label`. See [custom-process-development.md](../docs/custom-process-development.md).
+9. **Current step = Process: Registration** – Confirm the Process step references a process name that matches an OSGi-registered `WorkflowProcess` with that `process.label`. In Felix Console → OSGi → Components, search for WorkflowProcess services; verify bundle Active and label matches (case-sensitive).
 10. **Current step = OR/AND Split: Condition** – Confirm the split condition (rule or user choice) is defined and that the chosen branch has a valid next step.
 11. **Current step = OR/AND Split: Routes** – Confirm every branch of the split has a transition to a step (no missing or dead-end routes). In editor, Sync must succeed; fix any invalid branch.
 
@@ -60,4 +60,4 @@ Workflow instance remains in state Running and does not advance to the next step
 
 ## References
 
-[error-patterns.md](../docs/error-patterns.md) | [mbeans.md](../docs/mbeans.md) | [workflow-editor-and-steps.md](../docs/workflow-editor-and-steps.md) | [custom-process-development.md](../docs/custom-process-development.md)
+[error-patterns.md](../docs/error-patterns.md) | [mbeans.md](../docs/mbeans.md) | [runbook-stale-workflows.md](runbook-stale-workflows.md) | [runbook-failed-work-items.md](runbook-failed-work-items.md)

@@ -49,4 +49,6 @@ Large `/var/workflow/instances`; slow queries; high disk usage from old workflow
 
 ## References
 
-[mbeans.md](../docs/mbeans.md) | [configurations.md](../docs/configurations.md) | [example-jmx-purge-and-restart.md](../examples/example-jmx-purge-and-restart.md)
+[mbeans.md](../docs/mbeans.md) | [runbook-stale-workflows.md](runbook-stale-workflows.md)
+
+OSGi tuning properties (Purge Scheduler factory, `granite.workflow.maxPurgeQueryCount`, `granite.workflow.maxPurgeSaveThreshold`): SKILL.md Step 5.

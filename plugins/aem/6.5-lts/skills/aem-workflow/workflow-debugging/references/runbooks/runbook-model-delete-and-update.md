@@ -7,9 +7,7 @@
 ## 1. Verify the issue
 
 1. **Running instances** – JMX → `com.adobe.granite.workflow:type=Maintenance` → **countRunningWorkflows**(modelId).
-2. **Paths** – Models at `/var/workflow/models`; overlay at `/conf/global/settings/workflow/models`. Cache may need time or instance restart.
-
-**Reference:** [JCR paths](../docs/jcr-paths.md).
+2. **Paths** – Models at `/var/workflow/models` (runtime); overlay at `/conf/global/settings/workflow/models` (design-time). Cache may need time or instance restart.
 
 ---
 
