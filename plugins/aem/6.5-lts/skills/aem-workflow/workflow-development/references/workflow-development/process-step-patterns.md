@@ -56,7 +56,8 @@ metadata.put("assignedGroup", resolveReviewGroup(payloadPath));
 ## Pattern 4: Advance a Participant Step Programmatically
 
 ```java
-// Used inside a task completion listener or custom step
+// Used inside a task completion listener or custom step.
+// getRoutes returns forward routes; use getBackRoutes for back routes.
 List<Route> routes = session.getRoutes(workItem, false);
 Route approveRoute = routes.stream()
     .filter(r -> "Approve".equalsIgnoreCase(r.getName()))
@@ -120,6 +121,8 @@ public void execute(WorkItem item, WorkflowSession session, MetaDataMap args)
 | Hold for external event | Use TaskWorkflowProcess or EXTERNAL_PROCESS | Step remains SUSPENDED |
 
 ## Testing
+
+`SimpleMetaDataMap` lives in `com.adobe.granite.workflow.metadata` but is not always on the public export list across 6.5 LTS versions. If it is not accessible from your test scope, mock `MetaDataMap` via Mockito (`mock(MetaDataMap.class)` with per-key stubs, or a `HashMap`-backed Answer) instead.
 
 ```java
 @Test

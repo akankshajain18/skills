@@ -65,6 +65,8 @@ public class ContentOwnerChooser implements ParticipantStepChooser {
 
 ### Pattern 3: Project-Based Participant
 
+`ParticipantStepChooser.getParticipant()` must return a JCR `rep:principalName` (user ID or group ID), **never a path**. For AEM Projects, read the principal(s) from the project's `roles` node and return a principal name.
+
 ```java
 @Component(service = ParticipantStepChooser.class,
            property = {"chooser.label=Project Editors Chooser"})
@@ -76,9 +78,17 @@ public class ProjectEditorsChooser implements ParticipantStepChooser {
         String projectPath = workItem.getWorkflowData()
                                      .getMetaDataMap().get("project.path", String.class);
         if (projectPath != null) {
-            return projectPath + "/jcr:content/editors";
+            ResourceResolver resolver = session.adaptTo(ResourceResolver.class);
+            Resource roles = resolver.getResource(projectPath + "/jcr:content/roles");
+            if (roles != null) {
+                // 'editors' is a multi-value property of principal names (user/group IDs)
+                String[] editors = roles.getValueMap().get("editors", String[].class);
+                if (editors != null && editors.length > 0) {
+                    return editors[0];
+                }
+            }
         }
-        return "workflow-administrators";
+        return args.get("fallbackParticipant", "workflow-administrators");
     }
 }
 ```
@@ -86,9 +96,9 @@ public class ProjectEditorsChooser implements ParticipantStepChooser {
 ## Completing Participant Steps via Code
 
 ```java
-// Retrieve available routes for the work item
+// Retrieve forward routes available from this work item.
+// For back routes (rewind), use session.getBackRoutes(workItem).
 List<Route> routes = session.getRoutes(workItem, false);
-// false = non-backtrack routes (forward routes only)
 
 // Find by name
 Route targetRoute = routes.stream()

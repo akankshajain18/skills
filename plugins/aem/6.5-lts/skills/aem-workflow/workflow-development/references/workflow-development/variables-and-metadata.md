@@ -67,15 +67,17 @@ Use instead of custom code when assignment logic is simple:
 | `LITERAL` | `"approvalStatus"` | A literal string `"APPROVED"` |
 | `RELATIVE_TO_PAYLOAD` | `"payloadTitle"` | JCR property relative to payload (e.g. `jcr:title`) |
 | `ABSOLUTE_PATH` | `"result"` | Full JCR path to a property |
-| `EXPRESSION` | `"computed"` | Groovy/ECMA expression |
+| `EXPRESSION` | `"computed"` | ECMAScript expression |
 | `VARIABLE` | `"copy"` | Another variable's value |
 | `JSON_DOT_NOTATION` | `"field"` | JSON path like `data.response.status` |
 | `XPATH` | `"xmlField"` | XPath over an XML-typed variable |
 
 ## Goto Step for Retry Loops (OOTB GotoProcess)
 
+Workflow rules (OR_SPLIT branches, Goto, launcher conditions) are evaluated as **ECMAScript** (Rhino) on AEM 6.5 LTS. Groovy is not supported for workflow rules.
+
 ```javascript
-// OR_SPLIT / PROCESS Goto rule
+// OR_SPLIT / PROCESS Goto rule — ECMAScript
 function check() {
     var count = workflowData.getMetaDataMap().get("retryCount", 0);
     return count < 3 && !workflowData.getMetaDataMap().get("processingDone", false);

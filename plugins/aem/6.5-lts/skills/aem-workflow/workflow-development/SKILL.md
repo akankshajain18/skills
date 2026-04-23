@@ -8,11 +8,26 @@ license: Apache-2.0
 
 Implement custom workflow components for AEM 6.5 LTS: `WorkflowProcess`, `ParticipantStepChooser`, OSGi registration, metadata handling, and error patterns.
 
+## Audience
+
+Java developers with OSGi / Maven familiarity building custom workflow steps on AEM 6.5 LTS (including AMS).
+
 ## Variant Scope
 
-- AEM 6.5 LTS only.
+- AEM 6.5 LTS, including Adobe Managed Services (AMS) deployments of 6.5 LTS.
 - Both Felix SCR and DS R6 annotations are supported. DS R6 preferred for new code.
+- Felix SCR is supported for the lifetime of AEM 6.5 LTS only. Code intended to outlive 6.5 LTS (e.g., a future Cloud Service migration) should start on DS R6.
 - Bundle deployed via Maven (`autoInstallBundle`) or Package Manager.
+
+## Prerequisites
+
+- AEM 6.5 LTS author instance reachable (local, dev, or sandbox).
+- Maven project with `core` + `ui.content` modules.
+- Service user created and mapped via `ServiceUserMapper` with the ACLs your step needs.
+- Bundle build + deploy path verified (`mvn install -P autoInstallBundle` or Package Manager upload).
+- `filter.xml` covers the workflow model and launcher paths you intend to install.
+
+Full checklist and deploy-verification commands: [quick-start-guide.md](./references/workflow-foundation/quick-start-guide.md).
 
 ## Workflow
 
@@ -40,12 +55,14 @@ Development Progress
 )
 public class MyCustomProcess implements WorkflowProcess {
 
-    @Reference
-    private ResourceResolverFactory resolverFactory;
-
     @Override
     public void execute(WorkItem item, WorkflowSession session, MetaDataMap args)
             throws WorkflowException {
+        // Guard against non-JCR_PATH payloads (e.g., BLOB).
+        // See process-step-patterns.md Pattern 1 for the full payload-type handling.
+        if (!"JCR_PATH".equals(item.getWorkflowData().getPayloadType())) {
+            return;
+        }
         String payloadPath = item.getWorkflowData().getPayload().toString();
         String myArg = args.get("myArgKey", "defaultValue");
         item.getWorkflowData().getMetaDataMap().put("processedBy", "my-step");
@@ -54,6 +71,8 @@ public class MyCustomProcess implements WorkflowProcess {
 }
 ```
 
+For payload writes, inject a `ResourceResolverFactory` and open a service-user resolver — see [process-step-patterns.md Pattern 5](./references/workflow-development/process-step-patterns.md).
+
 ## WorkflowProcess Template — Felix SCR (Still Valid)
 
 ```java
@@ -61,9 +80,6 @@ public class MyCustomProcess implements WorkflowProcess {
 @Service(value = WorkflowProcess.class)
 @Property(name = "process.label", value = "My Custom Process Step")
 public class MyCustomProcess implements WorkflowProcess {
-
-    @Reference
-    private SlingRepository repository;
 
     @Override
     public void execute(WorkItem item, WorkflowSession session, MetaDataMap args)
@@ -98,11 +114,46 @@ public class DepartmentHeadChooser implements ParticipantStepChooser {
 - Felix SCR: keep `metatype=false` unless exposing configuration to the OSGi console.
 - Do not mix Felix SCR and DS R6 annotations in the same class.
 - Throw `WorkflowException` for retryable errors; log and rethrow for unexpected errors.
+- Do not log full payload contents or metadata values at `INFO` — payloads may carry PII or confidential content. Log the payload path and a correlation key; log full values only at `DEBUG` on non-production instances.
+
+## Rollback / Recovery
+
+If a deployed `WorkflowProcess` or `ParticipantStepChooser` misbehaves (throws on every payload, leaks resources, or produces stuck instances):
+
+1. Uninstall or replace the bundle — Felix Console → Bundles → **Uninstall**, or deploy a corrected bundle via Package Manager / Maven. If the environment is under change control, prefer redeploying the previous known-good content package via the customer's deploy pipeline over a direct Felix Console uninstall.
+2. Disable the launcher that routes content into the broken step — set `enabled={Boolean}false` at `/conf/global/settings/workflow/launcher/config/<name>` (do not delete the `/libs` node).
+3. Drain stuck or failed instances — Tools → Workflow → Instances (terminate individual instances) or JMX (`com.adobe.granite.workflow:type=Maintenance` → `retryFailedWorkItems`, `restartStaleWorkflows`). Before terminating, confirm each instance is expendable (test data, known-bad payloads). If an instance represents live business work, prefer `retryFailedWorkItems` or suspend/resume first — terminate destroys the in-flight work item.
+4. Monitor **Tools → Workflow → Failures** and `error.log` for at least 15 minutes of post-rollback traffic, or one full processing cycle of the affected launcher — whichever is longer — before declaring the incident closed.
+
+For full remediation workflows (stuck instances, thread pool exhaustion, purge), use the sibling [workflow-debugging](../workflow-debugging/SKILL.md) skill.
+
+## Escalation
+
+Engage the sibling [workflow-debugging](../workflow-debugging/SKILL.md) skill first, then Adobe Support, when:
+
+- A Granite-internal stack trace appears (classes under `com.adobe.granite.workflow.core.*`) that is not caused by the customer's own code.
+- Workflow instances remain stuck after `retryFailedWorkItems` and bundle redeploy.
+- The workflow Sling Job queue shows thread pool exhaustion that cannot be explained by the custom step's own runtime.
+- The Workflow Model Editor does not surface a registered `process.label` after bundle activation and a console restart.
+
+Artifacts to collect before opening a support ticket:
+
+- Bundle symbolic name + version.
+- Relevant `error.log` snippet with workflow instance ID / correlation ID.
+- Thread dump (`jstack <pid>` or Felix Console → Status → Threads).
+- Configuration Status ZIP (Felix Console → Status → Configuration Status).
+- Export of the stuck instance node under `/var/workflow/instances/server0/<date>/<id>`.
 
 ## References
 
+Development patterns:
 - [process-step-patterns.md](./references/workflow-development/process-step-patterns.md) — WorkflowProcess patterns with Felix SCR and DS R6 examples
 - [participant-step-patterns.md](./references/workflow-development/participant-step-patterns.md) — ParticipantStepChooser patterns and completing steps
 - [variables-and-metadata.md](./references/workflow-development/variables-and-metadata.md) — MetaDataMap, workflow variables, inter-step data
-- [api-reference.md](./references/workflow-foundation/api-reference.md)
-- [65-lts-guardrails.md](./references/workflow-foundation/65-lts-guardrails.md)
+
+Foundation:
+- [quick-start-guide.md](./references/workflow-foundation/quick-start-guide.md) — prerequisites, minimum viable workflow, deployment verification
+- [architecture-overview.md](./references/workflow-foundation/architecture-overview.md) — Granite engine flow, Sling Jobs, instance states
+- [jcr-paths-reference.md](./references/workflow-foundation/jcr-paths-reference.md) — model / launcher / instance / package paths and ACL groups
+- [api-reference.md](./references/workflow-foundation/api-reference.md) — `WorkflowProcess`, `WorkflowSession`, `MetaDataMap`, `ParticipantStepChooser` contracts
+- [65-lts-guardrails.md](./references/workflow-foundation/65-lts-guardrails.md) — model storage, deployment, service users, workflow packages
