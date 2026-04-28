@@ -33,7 +33,7 @@ This orchestrator routes into six sub-skills:
 
 These apply to every workflow task; surface them regardless of which sub-skill is loaded:
 
-- **Loop prevention.** A workflow whose process step modifies a JCR path watched by a launcher will re-trigger itself. Default to marking the JCR session inside the process step with `session.getWorkspace().getObservationManager().setUserData("workflowmanager")` so launcher listeners ignore the change. See `workflow-launchers` for the alternative `excludeList` and JCR-flag patterns.
+- **Loop prevention.** A workflow whose process step modifies a JCR path watched by a launcher will re-trigger itself. The `session` parameter on `WorkflowProcess.execute()` is a `WorkflowSession`, **not** a JCR `Session` — adapt it first (`javax.jcr.Session jcrSession = session.adaptTo(javax.jcr.Session.class);`) and tag the JCR `Session` with `jcrSession.getWorkspace().getObservationManager().setUserData("workflowmanager")` before the write so `WorkflowLauncherListener` ignores the resulting events. See `workflow-launchers` for the alternative `excludeList` / JCR-flag patterns.
 - **JMX safety.** Never recommend executing JMX remediation operations (`restartStaleWorkflows`, `purgeCompleted(dryRun=false)`, `terminate`, etc.) without first confirming the target instance with the user. These affect live workflow state and are not reversible. Always pair with `dryRun=true` first when the operation supports it.
 - **AEMaaCS stop-rule.** If the user's target is AEMaaCS, stop and load the cloud-service orchestrator — see Variant Scope above.
 
