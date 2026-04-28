@@ -108,7 +108,8 @@ workflow-launchers/references/workflow-launchers/condition-patterns.md
 **workflow-debugging:**
 ```
 workflow-debugging/SKILL.md
-workflow-debugging/reference.md
+workflow-debugging/references/docs/debugging-index.md   ← symptom→runbook index
+workflow-debugging/references/runbooks/<symptom_id>.md  ← runbook(s) matching the classified symptom_id
 ```
 
 **workflow-triaging:**
@@ -142,7 +143,7 @@ Before doing anything, apply these non-negotiable constraints:
 | Model design-time path | `/conf/global/settings/workflow/models/<id>` |
 | Model runtime path (for API calls) | `/var/workflow/models/<id>` |
 | Launcher config path | `/conf/global/settings/workflow/launcher/config/` |
-| Service users | Always use `workflow-process-service` sub-service; never admin credentials |
+| Service users | Use a **dedicated** service user with narrow ACLs (`jcr:read` on payload paths, `jcr:read` on `/var/workflow/models`, `jcr:write` on `/var/workflow/instances`); never admin credentials. Do not reuse the OOTB `workflow-process-service` user for application sub-services — it carries broader privileges than typical workflow code needs |
 | OSGi annotations | Use DS R6 (`@Component`, `@Reference` from `org.osgi.service.component.annotations`) |
 | Deploy via | Cloud Manager pipeline — no Package Manager in production |
 | No `javax.jcr.Session.loginAdministrative` | Use `ResourceResolverFactory.getServiceResourceResolver()` |
@@ -186,8 +187,9 @@ Author tier
 1. Load `workflow-model-design` + `workflow-development` sub-skills
 2. Design model: START → PARTICIPANT (reviewer) → PROCESS (approve/reject logic) → END
 3. Implement `WorkflowProcess` for the approve/reject step
-4. Deploy model XML to `/conf/global/settings/workflow/models/`
-5. Deploy OSGi bundle with the process step
+4. Deploy model XML to `/conf/global/settings/workflow/models/<id>` via the project's `all` content package and the Cloud Manager pipeline
+5. Deploy the OSGi bundle in the same pipeline run so the process step is registered
+6. Run **Tools → Workflow → Models → Sync** so the runtime copy at `/var/workflow/models/<id>` matches design-time. The engine reads only from `/var/workflow/models/<id>`.
 
 ### Pattern B: Auto-process content on upload
 
@@ -200,7 +202,7 @@ Author tier
 
 1. Load `workflow-triggering` sub-skill
 2. Implement `WorkflowStarterService` using `ResourceResolverFactory` + `WorkflowSession`
-3. Map sub-service `workflow-starter` to `workflow-process-service`
+3. Map sub-service `workflow-starter` to a **dedicated** service user with narrow ACLs (`jcr:read` on payload paths, `jcr:read` on `/var/workflow/models`, `jcr:write` on `/var/workflow/instances`). Do not reuse the OOTB `workflow-process-service` user — it carries broader privileges than a workflow starter needs.
 4. Deploy and trigger from a Sling Scheduler or Servlet
 
 ### Pattern D: "Workflow errors on host X for the past 4 hours"
