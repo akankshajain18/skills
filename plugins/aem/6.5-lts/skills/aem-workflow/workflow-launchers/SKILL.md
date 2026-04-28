@@ -228,6 +228,6 @@ If the launcher fires (you see the log line) but the workflow doesn't progress, 
 |---|---|
 | `references/workflow-launchers/launcher-config-reference.md` | Full property spec and XML templates |
 | `references/workflow-launchers/condition-patterns.md` | Common condition patterns, glob syntax, event type codes |
-| `references/workflow-foundation/architecture-overview.md` | Granite Workflow Engine overview |
-| `references/workflow-foundation/65-lts-guardrails.md` | 6.5 LTS constraints and legacy path guidance |
-| `references/workflow-foundation/jcr-paths-reference.md` | Where launchers live in the JCR |
+| `../workflow-orchestrator/references/workflow-foundation/architecture-overview.md` | Granite Workflow Engine overview (canonical) |
+| `../workflow-orchestrator/references/workflow-foundation/65-lts-guardrails.md` | 6.5 LTS constraints and legacy path guidance (canonical) |
+| `../workflow-orchestrator/references/workflow-foundation/jcr-paths-reference.md` | Where launchers live in the JCR (canonical) |

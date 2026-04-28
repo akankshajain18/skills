@@ -235,7 +235,7 @@ Author tier
 
 1. Load `workflow-triggering` sub-skill
 2. Implement `WorkflowStarterService` using `ResourceResolverFactory` + `WorkflowSession`
-3. Map sub-service `workflow-starter` to a **dedicated** service user with narrow ACLs (`jcr:read` on payload paths, `jcr:read` on `/var/workflow/models`, `jcr:write` on `/var/workflow/instances`). Do not reuse the OOTB `workflow-process-service` user — it carries broader privileges than a workflow starter needs.
+3. Map a sub-service to a service user with the ACLs the starter actually needs (`jcr:read` on payload paths, `jcr:read` on `/var/workflow/models`, `jcr:write` on `/var/workflow/instances`). The OOTB `workflow-process-service` user already carries these privileges on a stock 6.5 LTS install and is the standard target for the `workflow` sub-service — reuse it unless your starter writes outside that user's ACL scope or compliance requires a narrower user, in which case create a dedicated user (e.g., `workflow-starter`) with just the ACLs above.
 4. Deploy and trigger from a Sling Scheduler or Servlet
 
 ### Pattern D: Replace OOTB DAM Update Asset launcher
