@@ -94,6 +94,6 @@ These choices are made at design time and are hard to retrofit. Apply them befor
 - [step-types-catalog.md](./references/workflow-model-design/step-types-catalog.md) — complete step type reference with XML snippets
 - [model-xml-reference.md](./references/workflow-model-design/model-xml-reference.md) — full model XML structure and property reference
 - [model-design-patterns.md](./references/workflow-model-design/model-design-patterns.md) — common design patterns: linear, decision, parallel, loop-back
-- [architecture-overview.md](./references/workflow-foundation/architecture-overview.md)
-- [jcr-paths-reference.md](./references/workflow-foundation/jcr-paths-reference.md)
-- [65-lts-guardrails.md](./references/workflow-foundation/65-lts-guardrails.md)
+- [architecture-overview.md](../workflow-orchestrator/references/workflow-foundation/architecture-overview.md) — canonical foundation copy
+- [jcr-paths-reference.md](../workflow-orchestrator/references/workflow-foundation/jcr-paths-reference.md) — canonical foundation copy
+- [65-lts-guardrails.md](../workflow-orchestrator/references/workflow-foundation/65-lts-guardrails.md) — canonical foundation copy

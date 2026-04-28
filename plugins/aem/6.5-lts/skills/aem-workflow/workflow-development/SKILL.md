@@ -36,7 +36,7 @@ This skill builds on:
 - Bundle build + deploy path verified (`mvn install -P autoInstallBundle` or Package Manager upload).
 - `filter.xml` covers the workflow model and launcher paths you intend to install.
 
-Full checklist and deploy-verification commands: [quick-start-guide.md](./references/workflow-foundation/quick-start-guide.md).
+Full checklist and deploy-verification commands: [quick-start-guide.md](../workflow-orchestrator/references/workflow-foundation/quick-start-guide.md).
 
 ## Workflow
 
@@ -170,9 +170,9 @@ Development patterns:
 - [participant-step-patterns.md](./references/workflow-development/participant-step-patterns.md) — ParticipantStepChooser patterns and completing steps
 - [variables-and-metadata.md](./references/workflow-development/variables-and-metadata.md) — MetaDataMap, workflow variables, inter-step data
 
-Foundation:
-- [quick-start-guide.md](./references/workflow-foundation/quick-start-guide.md) — prerequisites, minimum viable workflow, deployment verification
-- [architecture-overview.md](./references/workflow-foundation/architecture-overview.md) — Granite engine flow, Sling Jobs, instance states
-- [jcr-paths-reference.md](./references/workflow-foundation/jcr-paths-reference.md) — model / launcher / instance / package paths and ACL groups
-- [api-reference.md](./references/workflow-foundation/api-reference.md) — `WorkflowProcess`, `WorkflowSession`, `MetaDataMap`, `ParticipantStepChooser` contracts
-- [65-lts-guardrails.md](./references/workflow-foundation/65-lts-guardrails.md) — model storage, deployment, service users, workflow packages
+Foundation (canonical copies live under the orchestrator skill):
+- [quick-start-guide.md](../workflow-orchestrator/references/workflow-foundation/quick-start-guide.md) — prerequisites, minimum viable workflow, deployment verification
+- [architecture-overview.md](../workflow-orchestrator/references/workflow-foundation/architecture-overview.md) — Granite engine flow, Sling Jobs, instance states
+- [jcr-paths-reference.md](../workflow-orchestrator/references/workflow-foundation/jcr-paths-reference.md) — model / launcher / instance / package paths and ACL groups
+- [api-reference.md](../workflow-orchestrator/references/workflow-foundation/api-reference.md) — `WorkflowProcess`, `WorkflowSession`, `MetaDataMap`, `ParticipantStepChooser` contracts
+- [65-lts-guardrails.md](../workflow-orchestrator/references/workflow-foundation/65-lts-guardrails.md) — model storage, deployment, service users, workflow packages

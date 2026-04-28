@@ -192,6 +192,6 @@ Triggering is the surface where workflow load is *created* — apply these befor
 
 - [triggering-mechanisms.md](./references/workflow-triggering/triggering-mechanisms.md) — detailed guide for each mechanism
 - [programmatic-api.md](./references/workflow-triggering/programmatic-api.md) — WorkflowSession API patterns, service user setup, and HTTP API
-- [api-reference.md](./references/workflow-foundation/api-reference.md)
-- [jcr-paths-reference.md](./references/workflow-foundation/jcr-paths-reference.md)
-- [65-lts-guardrails.md](./references/workflow-foundation/65-lts-guardrails.md)
+- [api-reference.md](../workflow-orchestrator/references/workflow-foundation/api-reference.md) — canonical foundation copy
+- [jcr-paths-reference.md](../workflow-orchestrator/references/workflow-foundation/jcr-paths-reference.md) — canonical foundation copy
+- [65-lts-guardrails.md](../workflow-orchestrator/references/workflow-foundation/65-lts-guardrails.md) — canonical foundation copy
