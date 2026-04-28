@@ -36,7 +36,7 @@ This skill is downstream of two others — both must be in place before any trig
 
 - `workflow-users` (or equivalent) — start workflows from the Timeline UI or Manage Publication.
 - `workflow-administrators` (or equivalent) — terminate, suspend, or resume instances; required for HTTP `DELETE /api/workflow/instances/...`.
-- Service user with `jcr:read` on `/var/workflow/models/` and `jcr:read,jcr:write` on `/var/workflow/instances/` for programmatic triggering. The `workflow-process-service` system user already has these on a stock 6.5 LTS install.
+- Service user with `jcr:read` on `/var/workflow/models/` and `jcr:read,jcr:write` on `/var/workflow/instances/` for programmatic triggering.
 
 ## Triggering Mechanisms Summary
 

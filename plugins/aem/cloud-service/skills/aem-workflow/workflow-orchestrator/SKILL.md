@@ -169,7 +169,6 @@ Before doing anything, apply these non-negotiable constraints:
 | Model design-time path | `/conf/global/settings/workflow/models/<id>` |
 | Model runtime path (for API calls) | `/var/workflow/models/<id>` |
 | Launcher config path | `/conf/global/settings/workflow/launcher/config/` |
-| Service users | Use a **dedicated** service user with narrow ACLs (`jcr:read` on payload paths, `jcr:read` on `/var/workflow/models`, `jcr:write` on `/var/workflow/instances`); never admin credentials. Do not reuse the OOTB `workflow-process-service` user for application sub-services — it carries broader privileges than typical workflow code needs |
 | OSGi annotations | Use DS R6 (`@Component`, `@Reference` from `org.osgi.service.component.annotations`) |
 | Deploy via | Cloud Manager pipeline — no Package Manager in production |
 | No `javax.jcr.Session.loginAdministrative` | Use `ResourceResolverFactory.getServiceResourceResolver()` |
@@ -231,7 +230,7 @@ Author tier
 
 1. Load `workflow-triggering` sub-skill
 2. Implement `WorkflowStarterService` using `ResourceResolverFactory` + `WorkflowSession`
-3. Map sub-service `workflow-starter` to a **dedicated** service user with narrow ACLs (`jcr:read` on payload paths, `jcr:read` on `/var/workflow/models`, `jcr:write` on `/var/workflow/instances`). Do not reuse the OOTB `workflow-process-service` user — it carries broader privileges than a workflow starter needs.
+3. Map sub-service `workflow-starter` via `ServiceUserMapper` to a service user with the ACLs your starter needs.
 4. Deploy and trigger from a Sling Scheduler or Servlet
 
 ### Pattern D: "Workflow stuck — not advancing"

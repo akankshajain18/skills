@@ -15,7 +15,6 @@ Developers (and the IDE LLM acting on their behalf) starting workflows on AEM as
 ## Variant Scope
 
 - AEM as a Cloud Service only.
-- Use a **dedicated** service user with narrow ACLs for programmatic triggering — do not reuse the OOTB `workflow-process-service` user, which carries broader privileges than a workflow starter needs.
 - HTTP API auth is IMS-based on cloud environments; `admin:admin` is only valid against the local AEMaaCS SDK.
 - **Not for AEM 6.5 LTS.** If the target is 6.5 LTS, stop and use the 6.5-lts variant of this skill — replication-linked triggering, `/etc/workflow/packages/`, and `mvn install -PautoInstallBundle` deploys documented there do not apply on AEMaaCS.
 
