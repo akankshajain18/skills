@@ -12,7 +12,7 @@ Implement custom workflow components for AEM Cloud Service: `WorkflowProcess`, `
 
 - AEM Cloud Service only.
 - Use OSGi DS R6 annotations (`org.osgi.service.component.annotations.*`). Do not use Felix SCR.
-- Bundle goes into the `ui.apps` content package and is deployed via Cloud Manager pipeline.
+- The Java source lives in the `core` (or equivalent) Maven module that builds an OSGi bundle. The built bundle is wrapped by your project's `all` content package and deployed via Cloud Manager pipeline. Do not place `.java` source under `ui.apps/src/main/content/jcr_root/...` — `ui.apps` carries OSGi configs and `/apps` content, not Java source.
 
 ## Workflow
 

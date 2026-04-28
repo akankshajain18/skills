@@ -86,6 +86,8 @@ Node structure (`.content.xml`):
 
 ## Overlaying an OOTB Launcher
 
+> **Never disable an OOTB DAM launcher (`dam_update_asset_*`, `dam_xmp_writeback`) without confirming with the user that asset processing is intentionally being replaced.** Disabling these breaks rendition generation, metadata extraction, and XMP writeback — typically discovered hours later when assets render incorrectly. Only disable an OOTB launcher when you are explicitly replacing it with a custom workflow on the same path, and validate end-to-end asset upload after the change.
+
 To disable or modify an OOTB launcher (e.g., `dam_update_asset_create`):
 
 1. Copy the node from `/libs/settings/workflow/launcher/config/dam_update_asset_create` to `/conf/global/settings/workflow/launcher/config/dam_update_asset_create`
@@ -130,10 +132,10 @@ Omit `runModes` to fire on all run modes.
 
 ## Debugging Launchers
 
-- **Tools → Workflow → Launchers** UI — lists all active launchers, you can enable/disable interactively
+- **Tools → Workflow → Launchers** UI (canonical) — lists all active launchers, you can enable/disable interactively
 - Check `/conf/global/settings/workflow/launcher/config/` in CRXDE Lite for your deployed configs
 - Check OSGi console → `WorkflowLauncherListener` service properties
-- After deployment, verify via: `curl -u admin:admin http://localhost:4502/etc/workflow/launcher.json`
+- After deployment, verify via the **Tools → Workflow → Launchers** UI, or query `/conf/global/settings/workflow/launcher/config/<name>.json` against your **local AEMaaCS SDK** at `localhost:4502` only. Never embed credentials in scripts targeting Cloud Service environments — production auth is IMS-based, and the legacy `/etc/workflow/launcher.json` endpoint is not the canonical surface on AEMaaCS.
 
 ## References in This Skill
 
