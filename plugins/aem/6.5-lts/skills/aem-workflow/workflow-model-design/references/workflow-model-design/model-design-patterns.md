@@ -95,22 +95,22 @@ START → [PROCESS: TaskWorkflowProcess (SUSPEND)] → [PROCESS: Post-Approval] 
 
 `TaskWorkflowProcess` creates an Inbox Task, stores `taskId` in metadata, and **suspends** the workflow (`PROCESS_AUTO_ADVANCE=false`). When the user completes the task, `TaskEventListener` advances the workflow automatically.
 
-Configure the step as a `PROCESS` node referencing the OOTB `Task Manager Step`:
+Configure the step as a PROCESS node referencing the OOTB `Task Manager Step` (design-time `flow` layer format):
 ```xml
-<node_task
-    jcr:primaryType="cq:WorkflowNode"
-    title="Approve Content"
-    type="PROCESS">
+<approvecontent
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Approve Content"
+    sling:resourceType="cq/workflow/components/model/process">
   <metaData
       jcr:primaryType="nt:unstructured"
       PROCESS="Task Manager Step"
-      PROCESS_AUTO_ADVANCE="{Boolean}false"
+      PROCESS_AUTO_ADVANCE="false"
       taskTitle="Approve content for publication"
       taskDescription="Review the page and approve or reject."
       taskInstructions="Click Approve to publish, Reject to send back to author."
       taskOwner="content-reviewers"
       taskPriority="medium"/>
-</node_task>
+</approvecontent>
 ```
 
 - `PROCESS="Task Manager Step"` — OOTB label (FQCN: `com.adobe.granite.taskmanagement.impl.workflow.TaskWorkflowProcess`).
@@ -128,8 +128,13 @@ String completedBy = meta.get("lastTaskCompletedBy", "unknown");
 
 ## Pattern 6: Workflow Variables for Inter-Step Data
 
-Declare at model level:
+Variables are declared in the runtime model at `/var/workflow/models/<id>/` after Sync, via the
+Workflow Model Editor's variable configuration panel. They are not part of the design-time `flow`
+layer at `/conf`. The `cq:VariableTemplate` JCR structure below is what AEM stores in the runtime
+model — do not hand-author it in a content package:
+
 ```xml
+<!-- Runtime /var model only — managed by AEM after Sync -->
 <variables jcr:primaryType="nt:unstructured">
   <reviewDecision jcr:primaryType="cq:VariableTemplate"
       varName="reviewDecision" varType="java.lang.String"/>
