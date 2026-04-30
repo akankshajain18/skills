@@ -94,8 +94,13 @@ String completedBy = meta.get("lastTaskCompletedBy", "unknown");
 
 ## Pattern 6: Workflow Variables for Inter-Step Data
 
-Declare at model level:
+Variables are declared in the runtime model at `/var/workflow/models/<id>/` after Sync, via the
+Workflow Model Editor's variable configuration panel. They are not part of the design-time `flow`
+layer at `/conf`. The `cq:VariableTemplate` JCR structure below is what AEM stores in the runtime
+model — do not hand-author it in a content package:
+
 ```xml
+<!-- Runtime /var model only — managed by AEM after Sync -->
 <variables jcr:primaryType="nt:unstructured">
   <reviewDecision jcr:primaryType="cq:VariableTemplate"
       varName="reviewDecision" varType="java.lang.String"/>
