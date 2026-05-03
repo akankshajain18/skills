@@ -56,15 +56,77 @@ A `/conf`-based workflow model is a `cq:Page` whose `jcr:content` carries a `flo
 
 See [step-types-catalog.md](./step-types-catalog.md) for the correct `sling:resourceType` and `metaData` structure for each step type.
 
-Common pitfalls — do not use any of these; they look plausible but are wrong:
+## Runtime Model Structure (what Sync generates at /var — never hand-author this)
 
-- ❌ `cq:template="/libs/settings/workflow/templates/model"` — wrong. The correct value confirmed from live AEM is `/libs/cq/workflow/templates/model`.
-- ❌ Generating a `<model jcr:primaryType="cq:WorkflowModel">` node inside `jcr:content` at the `/conf` path — this is the runtime format that belongs at `/var/workflow/models/`, not the design-time format. The Workflow Model Editor cannot open models with this structure, and Sync cannot operate on them.
-- ❌ Using `cq:WorkflowNode` as the step node type in the design-time model — steps at `/conf` must be `nt:unstructured` with `sling:resourceType`.
-- ❌ Including `<transitions>` or `<nodes>` containers in the `/conf` model — these are not part of the design-time `flow` layer. Sync derives them automatically.
-- ❌ Using sequential names `node0`, `node1` for step nodes — use descriptive slugs that match the step's purpose (e.g., `sendnotification`, `contentreview`, `approvaldecision`).
-- ❌ Omitting the `<flow>` wrapper with `sling:resourceType="foundation/components/parsys"` — without this, the Workflow Model Editor cannot display the model canvas.
-- ❌ Using `{Boolean}true` for `PROCESS_AUTO_ADVANCE` — in the design-time `flow` layer this property is stored as a plain string `"true"`, not a typed boolean.
+After Sync, AEM writes the runtime model at `/var/workflow/models/<id>/`. Its shape is a mirror of
+the `/conf` page wrapper but with `jcr:content` being a `cq:WorkflowModel` node instead of
+`cq:PageContent`, and steps replaced by `cq:WorkflowNode` entries with a `type` property:
+
+```
+/var/workflow/models/<id>/          ← cq:Page (AEM-managed, never ship in a package)
+└── jcr:content/                    ← cq:WorkflowModel  (jcr:content IS the model — no "model/" child)
+    ├── nodes/  (nt:unstructured)
+    │   ├── node0  cq:WorkflowNode  type=START
+    │   ├── node1  cq:WorkflowNode  type=PROCESS / PARTICIPANT / OR_SPLIT / …
+    │   └── node3  cq:WorkflowNode  type=END
+    ├── transitions/  (nt:unstructured)
+    │   └── t01  cq:WorkflowTransition  from=node0  to=node1
+    └── variables/  (nt:unstructured)
+```
+
+Key facts:
+- `jcr:content` at `/var` **is** the `cq:WorkflowModel`. There is no separate `model/` child node.
+- Step nodes under `nodes/` use `cq:WorkflowNode` primary type and a `type` string property (`START`, `END`, `PROCESS`, `PARTICIPANT`, `OR_SPLIT`, `AND_SPLIT`, `AND_JOIN`).
+- Sequential names (`node0`, `node1`) are used by Sync — never use them in the design-time `flow` layer.
+- AEM derives this entire structure from the design-time `flow` layer when you click **Sync**.
+
+## Forbidden Patterns — if you are about to generate any of these, STOP
+
+**Forbidden 1 — `model/` child inside `jcr:content` at `/conf`:**
+
+```xml
+<!-- WRONG — never generate this -->
+<jcr:content jcr:primaryType="cq:PageContent" ...>
+  <flow .../>                            <!-- correct -->
+  <model jcr:primaryType="cq:WorkflowModel">   <!-- FORBIDDEN: no model/ child at /conf -->
+    <variables jcr:primaryType="nt:unstructured"/>
+    <nodes jcr:primaryType="nt:unstructured">
+      <node0 jcr:primaryType="cq:WorkflowNode" type="START"/>
+    </nodes>
+    <transitions jcr:primaryType="nt:unstructured"/>
+  </model>
+</jcr:content>
+```
+
+Why wrong: `jcr:content` at `/conf` is `cq:PageContent`. The `cq:WorkflowModel` format lives at `/var/workflow/models/<id>/jcr:content`, not as a child called `model/` inside the design-time page content. Sync creates it; you never write it.
+
+**Forbidden 2 — any file under `jcr_root/var/`:**
+
+```xml
+<!-- WRONG — never ship /var content in a package -->
+<!-- var/workflow/models/my-workflow/.content.xml -->
+<jcr:root jcr:primaryType="cq:WorkflowModel" ...>
+  <nodes .../>
+  <transitions .../>
+</jcr:root>
+```
+
+Why wrong: AEM Sync owns `/var/workflow/models/` entirely. Shipping it in a package produces conflicts and stale runtime state on re-install.
+
+**Forbidden 3 — `cq:WorkflowNode` steps or `{Boolean}` properties in the `/conf` flow layer:**
+
+```xml
+<!-- WRONG — cq:WorkflowNode belongs only at /var -->
+<node1 jcr:primaryType="cq:WorkflowNode" type="PROCESS">
+  <metaData PROCESS_AUTO_ADVANCE="{Boolean}true"/>   <!-- also wrong: must be plain string -->
+</node1>
+```
+
+Why wrong: Steps in the design-time `flow` layer must be `nt:unstructured` with `sling:resourceType`. Property values like `PROCESS_AUTO_ADVANCE` are plain strings (`"true"`), not typed JCR booleans.
+
+- ❌ `cq:template="/libs/settings/workflow/templates/model"` — wrong. Confirmed from live AEM: `/libs/cq/workflow/templates/model`.
+- ❌ Sequential node names `node0`, `node1` in the `flow` layer — use descriptive slugs (`sendnotification`, `approvaldecision`). Sequential names are generated by Sync at `/var`.
+- ❌ Omitting the `<flow>` wrapper with `sling:resourceType="foundation/components/parsys"` — the Workflow Model Editor cannot display the canvas without it.
 
 ## File Locations (6.5 LTS)
 

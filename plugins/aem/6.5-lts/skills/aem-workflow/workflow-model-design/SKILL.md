@@ -44,11 +44,32 @@ Model Design Progress
 - [ ] 3) Decide payload type: single JCR_PATH or multi-page workflow package (a `cq:Page` collection, detected at runtime via `adaptTo(ResourceCollection.class)`)
 - [ ] 4) Identify workflow variables needed for inter-step data passing
 - [ ] 5) Design model XML: flow/parsys layer with correct nt:unstructured step components and sling:resourceType per step
-- [ ] 6) Choose storage: /conf (requires Sync) vs /etc (auto-deployed)
+- [ ] 6) Choose storage: `/conf/global/settings/workflow/models/<id>` (default; requires Sync) unless the user explicitly names a site — then `/conf/<site>/settings/workflow/models/<id>`; or `/etc/workflow/models/<id>` (legacy, auto-deployed)
 - [ ] 7) Add filter.xml entry with mode="merge"
 - [ ] 8) Deploy via mvn install or Package Manager
 - [ ] 9) Open the model in Tools → Workflow → Models → Edit → Sync; verify the model appears in /var/workflow/models/ and all steps render on the editor canvas
 - [ ] 10) Start a test workflow instance; confirm it runs to completion
+```
+
+## Output Contract
+
+**Generate only these files for a `/conf`-based model:**
+
+| File | Node type | Purpose |
+|---|---|---|
+| `jcr_root/conf/.../models/<id>/.content.xml` | `cq:Page` | Model root page |
+| `jcr_root/conf/.../models/<id>/jcr:content/.content.xml` | `cq:PageContent` | Title, template, resourceType |
+| `jcr_root/conf/.../models/<id>/jcr:content/flow/.content.xml` | `nt:unstructured` + parsys | Step nodes |
+
+**Never generate — hard stops:**
+
+- ❌ **Any file under `jcr_root/var/`** — AEM Sync writes `/var/workflow/models/` automatically after you click Sync in the editor. Never ship `/var` content in a content package.
+- ❌ **A `model/` directory inside `jcr:content/` at the `/conf` path** — a `cq:WorkflowModel` node with `<nodes>` and `<transitions>` is the runtime format. It must never appear under `/conf`. The Workflow Model Editor cannot open a model that contains it.
+- ❌ **`<filter root="/var/workflow/models/..."/>` in filter.xml** — `/var` is never a package filter target. The only filter entry needed is the design-time `/conf` (or `/etc`) path.
+
+**filter.xml — correct entry:**
+```xml
+<filter root="/conf/global/settings/workflow/models/my-workflow" mode="merge"/>
 ```
 
 ## Node Types Quick Reference
@@ -63,6 +84,10 @@ Model Design Progress
 | `OR_SPLIT` | One branch selected by rule | Transition `rule` = ECMAScript (Rhino) |
 | `AND_SPLIT` | All branches execute in parallel | — |
 | `AND_JOIN` | Wait for all parallel branches | — |
+
+## Default Path Rule
+
+**Unless the user explicitly names a specific AEM site, always generate models at `/conf/global/settings/workflow/models/<id>`.** Do not infer a site-scoped path (e.g., `/conf/wknd/…`) from conversational context such as "for the WKND site" or "install on the WKND instance." Workflow models are not site-scoped by default — they are global resources. Only use `/conf/<site>/settings/workflow/models/<id>` when the user explicitly states that the model should be scoped to a specific site.
 
 ## 6.5 LTS: /conf vs /etc
 

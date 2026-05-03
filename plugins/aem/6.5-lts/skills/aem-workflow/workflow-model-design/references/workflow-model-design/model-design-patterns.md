@@ -114,7 +114,7 @@ Configure the step as a PROCESS node referencing the OOTB `Task Manager Step` (d
 ```
 
 - `PROCESS="Task Manager Step"` — OOTB label (FQCN: `com.adobe.granite.taskmanagement.impl.workflow.TaskWorkflowProcess`).
-- `PROCESS_AUTO_ADVANCE="{Boolean}false"` is required — the engine must hold here while the human acts.
+- `PROCESS_AUTO_ADVANCE="false"` (plain string, not `{Boolean}false`) is required — the engine must hold here while the human acts.
 - `taskOwner` is a JCR principal name (user ID or group ID).
 - After the user completes the task, `TaskEventListener` writes `lastTaskAction` and `lastTaskCompletedBy` to instance metadata; route by `lastTaskAction` in a downstream OR_SPLIT.
 
