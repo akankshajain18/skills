@@ -40,6 +40,28 @@ Model Design Progress
 - [ ] 9) Start a test workflow instance; confirm it runs to completion
 ```
 
+## Output Contract
+
+**Generate only these files for a `/conf`-based model:**
+
+| File | Node type | Purpose |
+|---|---|---|
+| `jcr_root/conf/.../models/<id>/.content.xml` | `cq:Page` | Model root page |
+| `jcr_root/conf/.../models/<id>/jcr:content/.content.xml` | `cq:PageContent` | Title, template, resourceType |
+| `jcr_root/conf/.../models/<id>/jcr:content/flow/.content.xml` | `nt:unstructured` + parsys | Step nodes |
+
+**Never generate — hard stops:**
+
+- ❌ **Any file under `jcr_root/var/`** — AEM Sync writes `/var/workflow/models/` automatically after you click Sync in the editor. Never ship `/var` content in a content package.
+- ❌ **A `model/` directory inside `jcr:content/` at the `/conf` path** — a `cq:WorkflowModel` node with `<nodes>` and `<transitions>` is the runtime format. It must never appear under `/conf`. The Workflow Model Editor cannot open a model that contains it.
+- ❌ **`<filter root="/var/workflow/models/..."/>` in filter.xml** — `/var` is never a package filter target. The only filter entry needed is the `/conf` path.
+- ❌ **Any path under `/etc/workflow/models/`** — deprecated and unsupported on AEM as a Cloud Service.
+
+**filter.xml — correct entry:**
+```xml
+<filter root="/conf/global/settings/workflow/models/my-workflow" mode="merge"/>
+```
+
 ## Node Types Quick Reference
 
 | Type | Purpose | Key metaData property |
@@ -53,6 +75,10 @@ Model Design Progress
 | `AND_SPLIT` | All branches execute in parallel | — |
 | `AND_JOIN` | Wait for all parallel branches | — |
 | `EXTERNAL_PROCESS` | Poll an external system | `EXTERNAL_PROCESS` = FQCN |
+
+## Default Path Rule
+
+**Unless the user explicitly names a specific AEM site, always generate models at `/conf/global/settings/workflow/models/<id>`.** Do not infer a site-scoped path (e.g., `/conf/wknd/…`) from conversational context such as "for the WKND site" or "install on the WKND instance." Workflow models are not site-scoped by default — they are global resources. Only use `/conf/<site>/settings/workflow/models/<id>` when the user explicitly states that the model should be scoped to a specific site.
 
 ## Cloud Service Deployment
 
